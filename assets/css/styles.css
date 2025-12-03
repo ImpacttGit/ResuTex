@@ -1,0 +1,88 @@
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* The "Paper" for the preview */
+.a4-paper {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    margin: 0 auto;
+    background: white;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    font-family: 'Merriweather', serif; /* The LaTeX Look */
+    color: #1a202c;
+    font-size: 10.5pt;
+    line-height: 1.4;
+}
+
+/* LaTeX-style formatting helpers */
+.latex-h1 {
+    font-weight: 700;
+    font-size: 24pt;
+    margin-bottom: 2mm;
+    line-height: 1.2;
+}
+
+.latex-section {
+    font-weight: 700;
+    font-size: 12pt;
+    text-transform: uppercase;
+    border-bottom: 1px solid #000;
+    margin-top: 4mm;
+    margin-bottom: 2mm;
+    padding-bottom: 1mm;
+}
+
+.latex-sub {
+    font-weight: 700;
+    font-size: 11pt;
+}
+
+.latex-italic {
+    font-style: italic;
+}
+
+.latex-list {
+    list-style-type: disc;
+    margin-left: 5mm;
+    margin-top: 1mm;
+}
+
+.latex-list li {
+    margin-bottom: 1mm;
+}
+
+/* Custom Scrollbar for editor */
+.custom-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e0; 
+    border-radius: 3px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0; 
+}
+
+/* Loading Animation */
+.loader {
+    border: 3px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 3px solid #3498db;
+    width: 20px;
+    height: 20px;
+    -webkit-animation: spin 1s linear infinite; /* Safari */
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

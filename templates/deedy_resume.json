@@ -1,0 +1,30 @@
+{
+    "name": "John Doe",
+    "phone": "800-123-4567",
+    "email": "john.doe@gmail.com",
+    "links": "linkedin.com/in/johndoe | github.com/johndoe",
+    "summary": "A passionate and driven individual with a strong foundation in computer science and a keen interest in software development. Seeking to leverage my skills and experience to contribute to a dynamic and innovative team.",
+    "experience": [
+        {
+            "role": "Software Engineering Intern",
+            "company": "Tech Innovations Inc.",
+            "dates": "June 2023 - August 2023",
+            "details": "• Developed and maintained web applications using React and Node.js<br>• Collaborated with a team of developers to create new features and fix bugs<br>• Wrote unit tests to ensure code quality and reliability"
+        },
+        {
+            "role": "Research Assistant",
+            "company": "State University",
+            "dates": "January 2022 - May 2022",
+            "details": "• Conducted research on machine learning algorithms for natural language processing<br>• Assisted in the development of a research paper, which was published in a peer-reviewed journal<br>• Presented research findings at a university-wide conference"
+        }
+    ],
+    "education": [
+        {
+            "school": "State University",
+            "degree": "Bachelor of Science in Computer Science",
+            "dates": "August 2020 - May 2024",
+            "details": "GPA: 3.8/4.0"
+        }
+    ],
+    "skills": "Programming Languages: Python, Java, JavaScript<br>Web Technologies: HTML, CSS, React, Node.js<br>Databases: MySQL, MongoDB<br>Tools: Git, Docker"
+}

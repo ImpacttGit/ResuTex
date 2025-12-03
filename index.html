@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResuTeX - ATS-Friendly LaTeX Resumes</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts: Merriweather mimics the standard LaTeX Computer Modern serif look -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- ================= LANDING PAGE VIEW ================= -->
+    <div id="landing-page" class="flex flex-col min-h-screen">
+        <!-- Nav -->
+        <nav class="bg-white border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-file-code text-indigo-600 text-2xl mr-2"></i>
+                        <span class="font-bold text-xl tracking-tight text-gray-900">ResuTeX</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <a href="#pricing" class="text-gray-600 hover:text-gray-900">Pricing</a>
+                        <button onclick="goToApp()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">
+                            Get Started
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero -->
+        <main class="flex-grow">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+                <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+                    <span class="block">The Professional Look of LaTeX.</span>
+                    <span class="block text-indigo-600">The Safety of ATS-Friendly.</span>
+                </h1>
+                <p class="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                    Stop choosing between beautiful design and getting hired. Our AI-powered builder creates standard, single-column LaTeX resumes guaranteed to pass robot screeners.
+                </p>
+                <div class="mt-10 max-w-sm mx-auto sm:max-w-none sm:flex sm:justify-center">
+                    <button onclick="goToApp()" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10">
+                        Build My Resume Free
+                    </button>
+                    <a href="#pricing" class="mt-3 sm:mt-0 sm:ml-3 w-full flex items-center justify-center px-8 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
+                        View Student Plans
+                    </a>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="bg-white py-16">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+                        <div class="text-center p-6">
+                            <div class="h-12 w-12 mx-auto bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-robot text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold mb-2">100% ATS Certified</h3>
+                            <p class="text-gray-500">Our templates are tested against Taleo, Greenhouse, and Lever. No columns, no hidden tables, just clean parsing.</p>
+                        </div>
+                        <div class="text-center p-6">
+                            <div class="h-12 w-12 mx-auto bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold mb-2">AI Co-Pilot</h3>
+                            <p class="text-gray-500">Tailor your resume for every single application. Scan job ads and rewrite bullet points in seconds.</p>
+                        </div>
+                        <div class="text-center p-6">
+                            <div class="h-12 w-12 mx-auto bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-code text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold mb-2">LaTeX Polish, No Code</h3>
+                            <p class="text-gray-500">Get the prestigious "Computer Modern" font look that STEM employers love, without writing a single line of code.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing -->
+            <div id="pricing" class="bg-gray-50 py-20">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-extrabold text-gray-900">Simple, Transparent Pricing</h2>
+                        <p class="mt-4 text-gray-500">Start for free. Upgrade when you need the power tools.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                        <!-- Free -->
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 flex flex-col">
+                            <h3 class="text-xl font-semibold text-gray-900">Free Starter</h3>
+                            <p class="text-gray-500 mt-2 text-sm">For your first resume.</p>
+                            <div class="my-6">
+                                <span class="text-4xl font-extrabold text-gray-900">£0</span>
+                            </div>
+                            <ul class="space-y-3 mb-8 flex-1">
+                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> 5 Free AI Auto-Scans</li>
+                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> 1 Basic ATS Template</li>
+                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> Unlimited PDF Downloads</li>
+                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> No Watermark</li>
+                            </ul>
+                            <button onclick="goToApp()" class="w-full bg-indigo-50 text-indigo-700 font-semibold py-2 rounded-lg hover:bg-indigo-100">Start Free</button>
+                        </div>
+                        
+                        <!-- Monthly -->
+                        <div class="bg-white rounded-2xl shadow-xl border-2 border-indigo-600 p-8 flex flex-col relative transform scale-105">
+                            <div class="absolute top-0 right-0 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">MOST POPULAR</div>
+                            <h3 class="text-xl font-semibold text-gray-900">Job Hunter</h3>
+                            <p class="text-gray-500 mt-2 text-sm">For active application seasons.</p>
+                            <div class="my-6">
+                                <span class="text-4xl font-extrabold text-gray-900">£10</span><span class="text-gray-500">/mo</span>
+                            </div>
+                            <ul class="space-y-3 mb-8 flex-1">
+                                <li class="flex items-center text-sm text-gray-900 font-medium"><i class="fa-solid fa-check text-indigo-600 mr-2"></i> 1,000 AI Credits / Month</li>
+                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> AI Bullet Rewriter & Job Matcher</li>
+                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> Access all 20+ Templates</li>
+                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> Download .tex Source Code</li>
+                            </ul>
+                            <button class="w-full bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-700">Subscribe Monthly</button>
+                        </div>
+
+                        <!-- Annual -->
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 flex flex-col">
+                            <h3 class="text-xl font-semibold text-gray-900">Student Pass</h3>
+                            <p class="text-gray-500 mt-2 text-sm">Cover your whole year of internships.</p>
+                            <div class="my-6">
+                                <span class="text-4xl font-extrabold text-gray-900">£49</span><span class="text-gray-500">/yr</span>
+                            </div>
+                            <p class="text-xs text-green-600 font-semibold mb-4 bg-green-50 inline-block px-2 py-1 rounded">Equivalent to £4.09/mo (14p/day)</p>
+                            <ul class="space-y-3 mb-8 flex-1">
+                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> 12,000 AI Credits (Upfront)</li>
+                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> All Premium Features</li>
+                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> Priority Support</li>
+                            </ul>
+                            <button class="w-full bg-indigo-50 text-indigo-700 font-semibold py-2 rounded-lg hover:bg-indigo-100">Get Student Pass</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ================= APP / EDITOR VIEW (Hidden by default) ================= -->
+    <div id="app-view" class="hidden flex h-screen bg-gray-100 overflow-hidden">
+        
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-900 text-white flex flex-col">
+            <div class="p-4 border-b border-gray-800 flex items-center">
+                <i class="fa-solid fa-file-code text-indigo-500 text-xl mr-2"></i>
+                <span class="font-bold text-lg">ResuTeX</span>
+            </div>
+            
+            <div class="p-4">
+                <div class="bg-gray-800 rounded-lg p-3">
+                    <p class="text-xs text-gray-400 mb-1">AI Credits Balance</p>
+                    <div class="flex justify-between items-end">
+                        <span id="credit-balance" class="text-xl font-bold text-indigo-400">50</span>
+                        <button onclick="showUpgradeModal()" class="text-xs text-white bg-indigo-600 px-2 py-1 rounded hover:bg-indigo-700">+ Top Up</button>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto py-4">
+                <a href="#" id="editor-link" onclick="showEditorView()" class="flex items-center px-6 py-3 bg-gray-800 border-r-4 border-indigo-500">
+                    <i class="fa-solid fa-pen-to-square w-6"></i>
+                    <span class="font-medium">Editor</span>
+                </a>
+                <a href="#" id="templates-link" onclick="showTemplatesView()" class="flex items-center px-6 py-3 text-gray-400 hover:text-white hover:bg-gray-800">
+                    <i class="fa-solid fa-layer-group w-6"></i>
+                    <span class="font-medium">Templates</span>
+                </a>
+                <a href="#" id="ai-link" class="flex items-center px-6 py-3 text-gray-400 hover:text-white hover:bg-gray-800">
+                    <i class="fa-solid fa-wand-magic-sparkles w-6 text-indigo-400"></i>
+                    <span class="font-medium text-indigo-200">AI Co-Pilot</span>
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-gray-800">
+                <button onclick="goHome()" class="flex items-center text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-right-from-bracket w-6"></i>
+                    <span>Exit</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex overflow-hidden">
+            
+            <!-- Left: Form Editor -->
+            <div class="w-1/2 bg-white border-r border-gray-200 flex flex-col h-full">
+                <!-- Toolbar -->
+                <div class="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white">
+                    <h2 class="font-bold text-gray-800">Content Editor</h2>
+                    <button onclick="triggerAIScan()" id="ai-scan-btn" class="flex items-center text-sm bg-green-50 text-green-700 px-3 py-1.5 rounded-md border border-green-200 hover:bg-green-100 transition">
+                        <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
+                        Auto-Fill from Resume (AI)
+                    </button>
+                </div>
+
+                <!-- Scrollable Form Area -->
+                <div class="flex-1 overflow-y-auto custom-scroll p-6 space-y-6">
+                    
+                    <!-- Section: Personal Info -->
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <h3 class="text-sm font-bold text-gray-700 uppercase mb-3 flex items-center">
+                            <i class="fa-regular fa-id-card mr-2"></i> Personal Info
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-2">
+                                <label class="block text-xs font-medium text-gray-500 uppercase">Full Name</label>
+                                <input type="text" id="input-name" class="w-full mt-1 p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g. Aidan Blakley">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 uppercase">Phone</label>
+                                <input type="text" id="input-phone" class="w-full mt-1 p-2 border border-gray-300 rounded" placeholder="+44 7342 ...">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 uppercase">Email</label>
+                                <input type="text" id="input-email" class="w-full mt-1 p-2 border border-gray-300 rounded" placeholder="email@icloud.com">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-xs font-medium text-gray-500 uppercase">Links (LinkedIn/GitHub)</label>
+                                <input type="text" id="input-links" class="w-full mt-1 p-2 border border-gray-300 rounded" placeholder="LinkedIn | GitHub">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section: Summary -->
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-sm font-bold text-gray-700 uppercase flex items-center">
+                                <i class="fa-regular fa-user mr-2"></i> Professional Summary
+                            </h3>
+                            <button onclick="useAICredit(event, 5, 'Summary Optimized!')" class="text-xs text-indigo-600 font-medium hover:text-indigo-800 flex items-center">
+                                <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Rewrite (5 Credits)
+                            </button>
+                        </div>
+                        <textarea id="input-summary" rows="4" class="w-full p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500" placeholder="Aspiring Aerospace Engineering student..."></textarea>
+                    </div>
+
+                    <!-- Section: Experience -->
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-sm font-bold text-gray-700 uppercase flex items-center">
+                                <i class="fa-solid fa-briefcase mr-2"></i> Experience
+                            </h3>
+                            <button class="text-xs bg-white border border-gray-300 px-2 py-1 rounded hover:bg-gray-100">+ Add</button>
+                        </div>
+                        
+                        <div id="experience-list" class="space-y-4">
+                            <!-- JS will populate this -->
+                        </div>
+                    </div>
+
+                    <!-- Section: Education -->
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-sm font-bold text-gray-700 uppercase flex items-center">
+                                <i class="fa-solid fa-graduation-cap mr-2"></i> Education
+                            </h3>
+                            <button class="text-xs bg-white border border-gray-300 px-2 py-1 rounded hover:bg-gray-100">+ Add</button>
+                        </div>
+                        <div id="education-list" class="space-y-4">
+                            <!-- JS will populate this -->
+                        </div>
+                    </div>
+
+                    <!-- Section: Skills -->
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <h3 class="text-sm font-bold text-gray-700 uppercase mb-3 flex items-center">
+                            <i class="fa-solid fa-screwdriver-wrench mr-2"></i> Skills
+                        </h3>
+                        <textarea id="input-skills" rows="3" class="w-full p-2 border border-gray-300 rounded" placeholder="Python, Bot Development, Process Automation..."></textarea>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right: Preview (The "Paper") -->
+            <div class="w-1/2 bg-gray-200 overflow-y-auto custom-scroll p-8 flex justify-center relative">
+                
+                <!-- Floating Action Buttons -->
+                <div class="absolute top-4 right-8 flex space-x-2 z-10">
+                    <button class="bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50">
+                        <i class="fa-solid fa-eye mr-1"></i> Preview
+                    </button>
+                    <button class="bg-indigo-600 text-white px-4 py-2 rounded shadow text-sm font-medium hover:bg-indigo-700">
+                        <i class="fa-solid fa-download mr-2"></i> Download PDF
+                    </button>
+                </div>
+
+                <!-- The Actual Resume Page -->
+                <div id="preview-page" class="a4-paper">
+                    <!-- Dynamic Content Loaded Here -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- Upgrade / Low Credit Modal -->
+    <div id="upgrade-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 mb-4">
+                    <i class="fa-solid fa-bolt text-indigo-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900">Power Up Your Job Hunt</h3>
+                <p class="text-sm text-gray-500 mt-2">
+                    You need more AI Credits to perform this action. Upgrade to the <strong>Job Hunter</strong> plan to get 1,000 credits/month and unlock the full template gallery.
+                </p>
+                <div class="mt-6 flex flex-col space-y-3">
+                    <button class="w-full bg-indigo-600 text-white py-2 rounded-md font-semibold hover:bg-indigo-700">
+                        Upgrade for £10/mo
+                    </button>
+                    <button class="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-md font-semibold hover:bg-gray-50">
+                        Buy 500 Credits for £5
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scanning Overlay -->
+    <div id="scan-overlay" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl p-8 flex flex-col items-center">
+            <div class="loader mb-4"></div>
+            <h3 class="text-lg font-bold text-gray-800">AI is analyzing your resume...</h3>
+            <p class="text-sm text-gray-500 mt-2">Extracting experience, parsing skills, formatting to LaTeX.</p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
