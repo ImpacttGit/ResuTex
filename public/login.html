@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body class="bg-gray-50 text-gray-800">
     <div class="min-h-screen flex items-center justify-center">
@@ -46,25 +46,24 @@
             </p>
         </div>
     </div>
-    <script type="module" src="firebase-app.js"></script>
-    <script type="module" src="script.js"></script>
     <script type="module">
-        import { signInWithEmailAndPassword, auth } from './firebase-app.js';
-
-        document.getElementById('login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            signInWithEmailAndPassword(auth, email, password)
-                .then(userCredential => {
-                    // Signed in 
-                    window.location.href = 'index.html';
-                })
-                .catch(error => {
-                    alert(error.message);
-                });
-        });
-    </script>
+    import { loginUser } from './assets/js/firebase-app.js';
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    try {
+        btn.textContent = "Signing In...";
+        btn.disabled = true;
+        await loginUser(email, password);
+        window.location.href = 'index.html';
+    } catch (error) {
+        alert("Login Failed: " + error.message);
+        btn.textContent = "Sign in";
+        btn.disabled = false;
+    }
+});
+</script>
 </body>
 </html>
