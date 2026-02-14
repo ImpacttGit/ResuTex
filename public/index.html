@@ -596,19 +596,19 @@
                     <div id="advanced-toolbar"
                         class="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white shrink-0">
                         <div class="flex items-center">
-                            <h2 class="font-bold text-gray-800 mr-4">Advanced Editor (LaTeX)</h2>
+                            <h2 class="font-bold text-gray-800 mr-4">Raw Code Editor (LaTeX)</h2>
                             <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-bold">PRO</span>
                         </div>
                         <div class="flex space-x-2">
-                            <button onclick="recompileLatex()"
+                            <button onclick="confirmSimpleMode()"
                                 class="flex items-center text-sm bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
-                                <i class="fa-solid fa-rotate-right mr-2"></i>
-                                Refresh Preview
+                                <i class="fa-solid fa-check-circle mr-2"></i>
+                                Apply & Return
                             </button>
                         </div>
                     </div>
                     <div id="advanced-editor-container" class="flex-1 p-0 relative h-full">
-                        <textarea id="latex-code-input" oninput="recompileLatexDebounced()"
+                        <textarea id="latex-code-input"
                             class="w-full h-full bg-gray-900 text-gray-200 font-mono text-sm p-4 outline-none resize-none"
                             spellcheck="false" placeholder="% Loading LaTeX source..."></textarea>
                     </div>
@@ -623,7 +623,7 @@
 
                     <!-- Advanced Mode Toggle -->
                     <div class="flex items-center bg-white px-3 py-2 rounded shadow space-x-2 mr-2">
-                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">Advanced Mode</span>
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">Code Editor</span>
                         <div
                             class="relative inline-block w-10 align-middle select-none transition duration-200 ease-in">
                             <input type="checkbox" name="toggle" id="advanced-mode-switch"
@@ -779,10 +779,11 @@
             <div
                 class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-amber-100 mb-6 font-bold text-amber-600 text-3xl">
                 !</div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">Advanced Editor</h3>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Entering Code Editor</h3>
             <p class="text-gray-600 mb-6 text-sm">
-                Ready to take full control? You can now edit the raw LaTeX source code.
-                Your changes will be synced back to the form automatically.
+                You are about to edit the raw LaTeX source code. This gives you total control over the resume layout.
+                <br><br>
+                When you return to the Content Editor, your changes will be synced back automatically.
             </p>
             <div class="flex space-x-3">
                 <button onclick="confirmAdvancedMode()"
@@ -828,7 +829,7 @@
     </form>
 
     <script src="assets/js/templates.js"></script>
-    <script type="module" src="assets/js/script.js?v=4"></script>
+    <script type="module" src="assets/js/script.js?v=6"></script>
 </body>
 
 </html>

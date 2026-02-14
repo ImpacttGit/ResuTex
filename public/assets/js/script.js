@@ -26,6 +26,18 @@ let credits = 0; // Will be synced from Firestore
 window.logoutUser = logoutUser;
 window.toggleProfileMenu = () => document.getElementById('profile-menu')?.classList.toggle('hidden');
 
+let _advancedDebounce = null;
+window.recompileLatexDebounced = function () {
+    clearTimeout(_advancedDebounce);
+    _advancedDebounce = setTimeout(window.recompileLatex, 500);
+};
+
+window.recompileLatex = function () {
+    // Disabled rendering for Code Editor mode as per user request.
+    // Swapping back to Simple Mode will re-enable preview from form data.
+    renderPreview();
+};
+
 // Close dropdown if clicking outside
 document.addEventListener('click', (e) => {
     const menu = document.getElementById('profile-menu');
@@ -648,7 +660,7 @@ window.toggleAdvancedMode = function () {
     const tier = currentUserProfile?.tier || 'free';
     if (tier === 'free') {
         toggle.checked = false;
-        alert("Advanced Mode (Direct LaTeX Editing) is a premium feature. Please upgrade to the Job Hunter or Student plan.");
+        alert("The Code Editor (Direct LaTeX Editing) is a premium feature. Please upgrade to the Job Hunter or Student plan.");
         window.viewPlans();
         return;
     }
@@ -676,8 +688,8 @@ window.confirmAdvancedMode = function () {
     customLatexCode = generateLaTeXSource(false, true);
     document.getElementById('latex-code-input').value = customLatexCode;
 
-    // Ensure Recompile runs once
-    recompileLatex();
+    // Ensure Refresh runs
+    renderPreview();
 };
 
 window.cancelAdvancedMode = function () {
@@ -794,21 +806,7 @@ window.checkoutPlan = async function (tierId) {
     }
 };
 
-let _advancedDebounce = null;
-window.recompileLatexDebounced = function () {
-    clearTimeout(_advancedDebounce);
-    _advancedDebounce = setTimeout(window.recompileLatex, 500);
-};
-
-window.recompileLatex = function () {
-    const rawCode = document.getElementById('latex-code-input').value;
-    if (!rawCode.trim()) {
-        document.getElementById('preview-page').innerHTML = '<div class="p-8 text-center text-gray-400 italic">Enter LaTeX code to see a preview...</div>';
-        return;
-    }
-    customLatexCode = rawCode;
-    _renderLocalLatex(rawCode);
-};
+// (Moved to top area)
 
 window.cloudRecompileLatex = function () {
     const rawCode = document.getElementById('latex-code-input').value;
@@ -856,10 +854,17 @@ window.cloudRecompileLatex = function () {
 
 function _renderLocalLatex(rawCode) {
     let previewCode = rawCode;
-    const unsupportedPackages = ['fullpage', 'titlesec', 'marvosym', 'verbatim', 'enumitem', 'fancyhdr', 'babel', 'tabularx', 'latexsym', 'color'];
+    const unsupportedPackages = ['fullpage', 'titlesec', 'marvosym', 'verbatim', 'enumitem', 'fancyhdr', 'babel', 'tabularx', 'latexsym', 'color', 'hyperref', 'glyphtounicode'];
     unsupportedPackages.forEach(pkg => {
         const regex = new RegExp(`\\\\usepackage\\[.*?\\]\\{${pkg}\\}|\\\\usepackage\\{${pkg}\\}`, 'g');
-        previewCode = previewCode.replace(regex, `% [ResuTeX Preview: Removed ${pkg}]`);
+        previewCode = previewCode.replace(regex, `% [Removed ${pkg}]`);
+    });
+
+    // Patch out specific non-standard commands that crash LaTeX.js
+    const brokenCommands = ['\\titleformat', '\\titlespacing', '\\fancyhf', '\\fancyfoot', '\\renewcommand{\\headrulewidth}', '\\renewcommand{\\footrulewidth}', '\\addtolength', '\\urlstyle', '\\raggedbottom', '\\raggedright', '\\setlength{\\tabcolsep}', '\\pdfgentounicode'];
+    brokenCommands.forEach(cmd => {
+        const regex = new RegExp(`\\${cmd.replace(/\\/g, '\\\\')}.*?($|\\n)`, 'g');
+        previewCode = previewCode.replace(regex, `% [Patched ${cmd}] \n`);
     });
 
     previewCode = previewCode.replace(/\\begin\{tabular\*\}\{.*?\}\{(.*?)\}/g, '\\begin{tabular}{$1}');
@@ -1174,6 +1179,22 @@ function _doRender() {
     const previewContainer = document.getElementById('preview-page');
     if (!previewContainer) return;
 
+    if (isAdvancedMode) {
+        previewContainer.innerHTML = `
+            <div class="h-full flex flex-col items-center justify-center p-8 text-center text-gray-500">
+                <div class="bg-indigo-50 p-6 rounded-2xl border border-indigo-100 max-w-sm">
+                    <i class="fa-solid fa-code text-indigo-400 text-4xl mb-4"></i>
+                    <h3 class="text-indigo-900 font-bold text-lg mb-2">Code Editor Active</h3>
+                    <p class="text-indigo-600/70 text-sm leading-relaxed">
+                        Live preview is disabled while editing raw LaTeX to ensure performance. 
+                        Click <strong>"Apply & Return"</strong> to see your changes in the Content Editor.
+                    </p>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
     // Try LaTeX.js rendering first
     if (typeof latexjs !== 'undefined') {
         try {
@@ -1386,6 +1407,15 @@ function init() {
             });
         }
     });
+    // LaTeX Editor Autosave/Preview
+    const latexEditor = document.getElementById('latex-code-input');
+    if (latexEditor) {
+        latexEditor.addEventListener('input', (e) => {
+            if (isAdvancedMode) {
+                recompileLatexDebounced();
+            }
+        });
+    }
 }
 
 // Run init immediately (as we are a module, DOM is ready or already loaded)
