@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "resutex-6e173"
-  }
+    "default": "resutex-6e173",
+    "ResuTex": "resutex-6e173"
+  },
+  "targets": {},
+  "etags": {}
 }

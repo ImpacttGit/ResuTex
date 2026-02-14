@@ -33,11 +33,50 @@
     <meta name="twitter:card" content="summary_large_image">
 
     <!-- Favicon -->
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
 </head>
 
 <body class="bg-gray-50 text-gray-800">
+
+    <!-- Privacy Settings Modal (Hidden by default) -->
+    <div id="privacy-settings-modal"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-80 dark:bg-gray-800 dark:text-white">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg">Privacy Blur Options</h3>
+                <button onclick="togglePrivacyModal()"
+                    class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="checkbox" onchange="toggleSpecificBlur('name')" checked
+                        class="form-checkbox text-indigo-600 rounded">
+                    <span>Blur Name</span>
+                </label>
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="checkbox" onchange="toggleSpecificBlur('email')" checked
+                        class="form-checkbox text-indigo-600 rounded">
+                    <span>Blur Email</span>
+                </label>
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="checkbox" onchange="toggleSpecificBlur('phone')" checked
+                        class="form-checkbox text-indigo-600 rounded">
+                    <span>Blur Phone Number</span>
+                </label>
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="checkbox" onchange="toggleSpecificBlur('links')" checked
+                        class="form-checkbox text-indigo-600 rounded">
+                    <span>Blur Links</span>
+                </label>
+            </div>
+            <div class="mt-6 text-right">
+                <button onclick="togglePrivacyModal()"
+                    class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 text-sm">Done</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Job Description Side Panel -->
     <div id="job-desc-panel"
@@ -392,7 +431,7 @@
 
             <!-- Left: Form Editor -->
             <div class="w-1/2 bg-white border-r border-gray-200 flex flex-col h-full flex-shrink-0">
-                <!-- Toolbar -->
+                <!-- Updated Toolbar with "ATS Safe" -->
                 <div class="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white">
                     <div class="flex items-center">
                         <h2 class="font-bold text-gray-800 mr-4">Content Editor</h2>
@@ -400,7 +439,7 @@
                         <div class="flex items-center bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200 cursor-help"
                             title="Your template is certified ATS Friendly">
                             <i class="fa-solid fa-shield-halved mr-2"></i>
-                            ATS Score: 100%
+                            ATS Safe
                         </div>
                     </div>
                     <div class="flex space-x-2">
@@ -516,18 +555,19 @@
 
                 <!-- Floating Action Buttons -->
                 <div class="absolute top-4 right-8 flex space-x-2 z-10">
-                    <button onclick="toggleBlur()"
-                        class="bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50"
-                        title="Privacy Blur">
-                        <i class="fa-solid fa-eye-slash"></i>
+                    <button onclick="togglePrivacyModal()"
+                        class="bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50 flex items-center"
+                        title="Privacy Settings">
+                        <i class="fa-solid fa-eye-slash mr-1"></i> Privacy
                     </button>
-                    <button onclick="renderPreview()"
-                        class="bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50">
-                        <i class="fa-solid fa-eye mr-1"></i> Preview
+                    <!-- "Preview" button removed as redundant with auto-update, or keep for mobile scroll -->
+                    <button onclick="scrollToPreview()"
+                        class="md:hidden bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50">
+                        <i class="fa-solid fa-eye"></i>
                     </button>
                     <button id="download-pdf-btn" onclick="downloadPDF()"
                         class="bg-indigo-600 text-white px-4 py-2 rounded shadow text-sm font-medium hover:bg-indigo-700">
-                        <i class="fa-solid fa-download mr-2"></i> Download PDF
+                        <i class="fa-solid fa-print mr-2"></i> Save as PDF
                     </button>
                 </div>
 

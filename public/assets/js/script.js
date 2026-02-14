@@ -2,18 +2,18 @@ import { monitorAuthState, saveResume, getResume, logoutUser, updateUserProfile 
 let currentUser = null;
 let resumeData = {
     name: "John Doe",
-    phone: "+1 (555) 123-4567",
+    phone: "+1 (555) 010-9999",
     email: "john.doe@example.com",
-    links: "LinkedIn | GitHub/johndoe",
-    summary: "Highly motivated individual with a passion for software development and a strong background in problem-solving and innovative design. Eager to contribute to dynamic teams and create impactful solutions.",
+    links: "linkedin.com/in/johndoe | github.com/johndoe",
+    summary: "Experienced software engineer with a proven track record of delivering high-quality web applications. Skilled in modern JavaScript frameworks, cloud infrastructure, and agile methodologies.",
     experience: [
-        { title: "Software Engineer", company: "Tech Innovations Inc.", years: "2023 - Present", description: "Developed and maintained web applications; collaborated with cross-functional teams; optimized database queries." },
-        { title: "Intern", company: "Startup Solutions", years: "2022 - 2023", description: "Assisted senior engineers in various projects; performed code reviews; contributed to front-end development." }
+        { role: "Senior Developer", company: "Tech Corp", dates: "2023 - Present", details: "- Led a team of 5 developers in rebuilding the core platform.\n- Improved system performance by 30% through code optimization.\n- Implemented CI/CD pipelines reducing deployment time by 50%." },
+        { role: "Software Engineer", company: "StartUp Inc", dates: "2021 - 2023", details: "- Developed key features for the MVP using React and Node.js.\n- Collaborated with product managers to define requirements.\n- Participated in daily stand-ups and code reviews." }
     ],
     education: [
-        { degree: "B.S. in Computer Science", university: "University of Technology", years: "2019 - 2023", gpa: "3.8/4.0" }
+        { school: "State University", degree: "B.S. Computer Science", dates: "2017 - 2021", details: "Magna Cum Laude, GPA 3.9/4.0" }
     ],
-    skills: "JavaScript, Python, React, Node.js, SQL, Git, AWS"
+    skills: "JavaScript, TypeScript, React, Node.js, Python, AWS, Docker, Git"
 };
 let credits = 50; // Assuming this was the default
 
@@ -148,82 +148,30 @@ window.showTemplatesView = () => {
 window.showUpgradeModal = () => document.getElementById('upgrade-modal').classList.remove('hidden');
 window.closeModal = () => document.getElementById('upgrade-modal').classList.add('hidden');
 window.triggerAIScan = () => alert("AI Scan coming soon!");
-window.downloadPDF = async function () {
-    const previewPage = document.getElementById('preview-page');
-    if (!previewPage) {
-        alert("Resume preview not found!");
-        return;
-    }
-
-    // Temporarily hide scrollbars or other elements that might interfere with rendering
-    previewPage.style.overflow = 'visible';
-    // Add a slight delay to ensure all DOM changes are applied before screenshot
-    await new Promise(resolve => setTimeout(resolve, 50));
-
-    try {
-        const canvas = await html2canvas(previewPage, {
-            scale: 2, // Keep scale for better resolution
-            useCORS: true // Enable CORS if you have external images
-        });
-
-        const imgData = canvas.toDataURL('image/png');
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-
-        const imgProps = pdf.getImageProperties(imgData);
-        const imgCanvasWidth = imgProps.width;
-        const imgCanvasHeight = imgProps.height;
-
-        let ratio = imgCanvasWidth / imgCanvasHeight;
-
-        let finalImgWidth = pdfWidth;
-        let finalImgHeight = pdfWidth / ratio;
-
-        // If calculated height exceeds PDF height, scale by height
-        if (finalImgHeight > pdfHeight) {
-            finalImgHeight = pdfHeight;
-            finalImgWidth = pdfHeight * ratio;
-        }
-
-        // Center the image if it's smaller than the page
-        const offsetX = (pdfWidth - finalImgWidth) / 2;
-        const offsetY = (pdfHeight - finalImgHeight) / 2;
-
-
-        // There is only one page as the content is designed for A4
-        pdf.addImage(imgData, 'PNG', offsetX, offsetY, finalImgWidth, finalImgHeight);
-
-        pdf.save('resume.pdf');
-        alert("PDF downloaded successfully!");
-
-    } catch (error) {
-        console.error("Error generating PDF:", error);
-        alert("Failed to download PDF. Please try again.");
-    } finally {
-        previewPage.style.overflow = 'auto'; // Restore original overflow
-    }
+window.downloadPDF = function () {
+    // Alert user about best practice
+    alert("Pro Tip: For the best quality (selectable text), choose 'Save as PDF' as the destination in the print dialog.");
+    window.print();
 };
 
 // --- SAMPLE DATA & AUTOSAVE ---
 window.loadSampleData = function () {
     if (confirm("This will overwrite your current fields. Continue?")) {
-        // Mock data matching the Deedy structure
+        // Generic "John Doe" data
         resumeData = {
-            name: "Jane Doe",
-            phone: "+1 555 0199",
-            email: "jane@example.com",
-            links: "linkedin.com/in/jane | github.com/jane",
-            summary: "Experienced software engineer with a focus on scalable systems.",
+            name: "John Doe",
+            phone: "+1 (555) 123-4567",
+            email: "john.doe@email.com",
+            links: "linkedin.com/in/johndoe | github.com/johndoe",
+            summary: "Results-oriented Software Engineer with experience in scalable architecture and distributed systems. Passionate about clean code and automation.",
             experience: [
-                { role: "Senior Engineer", company: "Tech Corp", dates: "2020-Present", details: "• Led team of 5 engineers.\n• Improved uptime by 99%." }
+                { role: "Senior Engineer", company: "Tech Solutions Inc.", dates: "2021-Present", details: "• Architected microservices reducing latency by 40%.\n• Mentored junior developers and led code reviews." },
+                { role: "Software Developer", company: "Startup Co.", dates: "2018-2021", details: "• Built full-stack features using React and Node.js.\n• Optimized database queries improving load times by 2x." }
             ],
             education: [
-                { school: "University of Tech", degree: "BS Computer Science", dates: "2016-2020", details: "GPA 3.9" }
+                { school: "State University", degree: "B.S. Computer Science", dates: "2014-2018", details: "Dean's List, GPA 3.8/4.0" }
             ],
-            skills: "Java, Python, C++, React, AWS"
+            skills: "JavaScript, Python, Go, Docker, AWS, SQL, NoSQL"
         };
         updateFormInputs();
         renderPreview();
@@ -245,6 +193,18 @@ function restoreFromLocal() {
         } catch (e) { console.error("Could not load save", e); }
     }
 
+    // Restore Privacy Settings
+    // Restore Privacy Settings
+    const privacySettings = JSON.parse(localStorage.getItem('resutex_privacy') || '{}');
+
+    ['name', 'email', 'phone', 'links'].forEach(field => {
+        if (privacySettings[field]) {
+            document.getElementById('preview-page').classList.add(`blur-${field}`);
+            const checkbox = document.getElementById(`blur-${field}-check`);
+            if (checkbox) checkbox.checked = true;
+        }
+    });
+
     // Restore other settings
     if (localStorage.getItem('resutex_dark') === 'true') {
         document.documentElement.classList.add('dark');
@@ -256,16 +216,31 @@ function restoreFromLocal() {
     }
 }
 
-// --- FEATURE TOGGLES ---
-window.toggleBlur = function () {
-    const page = document.getElementById('preview-page');
-    if (page) page.classList.toggle('privacy-blur');
+// --- PRIVACY & UI LOGIC ---
+window.togglePrivacyModal = function () {
+    const modal = document.getElementById('privacy-settings-modal');
+    modal.classList.toggle('hidden');
+};
 
-    const icon = event.currentTarget.querySelector('i');
-    if (icon) {
-        icon.classList.toggle('fa-eye-slash');
-        icon.classList.toggle('fa-eye');
+window.toggleSpecificBlur = function (field) {
+    const preview = document.getElementById('preview-page');
+    const isChecked = document.getElementById(`blur-${field}-check`).checked;
+
+    // Toggle class like 'blur-name', 'blur-email'
+    if (isChecked) {
+        preview.classList.add(`blur-${field}`);
+    } else {
+        preview.classList.remove(`blur-${field}`);
     }
+
+    // Save settings
+    const settings = JSON.parse(localStorage.getItem('resutex_privacy') || '{}');
+    settings[field] = isChecked;
+    localStorage.setItem('resutex_privacy', JSON.stringify(settings));
+};
+
+window.scrollToPreview = function () {
+    document.getElementById('app-view').scrollIntoView({ behavior: 'smooth' });
 };
 
 window.toggleDarkMode = function () {
@@ -389,12 +364,77 @@ function updateFormInputs() {
     });
 }
 
+// --- RENDER PREVIEW (Updated for Privacy Spans) ---
 function renderPreview() {
-    const p = document.getElementById('preview-page');
-    if (!p) return;
-    p.innerHTML = `<div class="text-center mb-6"><div class="latex-h1">${resumeData.name}</div><div class="text-sm">${resumeData.phone} | ${resumeData.email}</div></div>
-    <div class="latex-section">Summary</div><div>${resumeData.summary}</div>
-    <div class="latex-section">Skills</div><div>${resumeData.skills}</div>`;
+    const previewContainer = document.getElementById('preview-content');
+    if (!previewContainer) return;
+
+    // Helper to wrap text in privacy spans
+    const wrap = (text, type) => `<span class="sensitive-${type}">${text || ''}</span>`;
+
+    let html = `
+        <div class="text-center border-b pb-4 mb-4">
+            <h1 class="text-3xl font-bold uppercase tracking-wide text-gray-900 mb-1">${wrap(resumeData.name, 'name')}</h1>
+            <div class="text-sm text-gray-600">
+                ${wrap(resumeData.email, 'email')} | ${wrap(resumeData.phone, 'phone')} | ${wrap(resumeData.links, 'links')}
+            </div>
+        </div>
+        
+        <div class="mb-4">
+            <p class="text-sm text-gray-700 leading-relaxed">${resumeData.summary}</p>
+        </div>
+
+        <div class="mb-4">
+            <h2 class="text-lg font-bold text-gray-800 border-b-2 border-gray-300 mb-2 uppercase tracking-wider">Experience</h2>
+            <div class="space-y-3">
+    `;
+
+    resumeData.experience.forEach(exp => {
+        html += `
+            <div>
+                <div class="flex justify-between items-baseline mb-1">
+                    <h3 class="font-bold text-gray-800 text-sm">${exp.role}</h3>
+                    <span class="text-xs text-gray-500 font-medium">${exp.dates}</span>
+                </div>
+                <div class="text-sm text-gray-700 italic mb-1">${exp.company}</div>
+                <ul class="list-disc list-inside text-xs text-gray-600 space-y-0.5 ml-1">
+                    ${exp.details.split('\n').map(d => `<li>${d.replace(/^•\s*/, '')}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    });
+
+    html += `
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <h2 class="text-lg font-bold text-gray-800 border-b-2 border-gray-300 mb-2 uppercase tracking-wider">Education</h2>
+    `;
+
+    resumeData.education.forEach(edu => {
+        html += `
+            <div class="mb-2">
+                <div class="flex justify-between items-baseline">
+                    <h3 class="font-bold text-gray-800 text-sm">${edu.school}</h3>
+                    <span class="text-xs text-gray-500">${edu.dates}</span>
+                </div>
+                <div class="text-xs text-gray-700">${edu.degree}</div>
+                <div class="text-xs text-gray-500 italic">${edu.details}</div>
+            </div>
+        `;
+    });
+
+    html += `
+        </div>
+
+        <div>
+            <h2 class="text-lg font-bold text-gray-800 border-b-2 border-gray-300 mb-2 uppercase tracking-wider">Skills</h2>
+            <p class="text-xs text-gray-700 leading-relaxed">${resumeData.skills}</p>
+        </div>
+    `;
+
+    previewContainer.innerHTML = html;
 }
 
 
@@ -404,20 +444,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user) {
             currentUser = user;
             // UI Updates
-            document.getElementById('nav-guest')?.classList.add('hidden');
-            document.getElementById('nav-user')?.classList.remove('hidden');
+            if (document.getElementById('nav-guest')) document.getElementById('nav-guest').classList.add('hidden');
+            if (document.getElementById('nav-user')) document.getElementById('nav-user').classList.remove('hidden');
             if (document.getElementById('nav-user-name')) document.getElementById('nav-user-name').textContent = user.displayName || "User";
             if (document.getElementById('nav-user-email')) document.getElementById('nav-user-email').textContent = user.email;
 
             // Profile Pic
             if (user.photoURL) {
-                document.getElementById('nav-user-photo').src = user.photoURL;
-                document.getElementById('nav-user-photo').classList.remove('hidden');
-                document.getElementById('nav-user-icon').classList.add('hidden');
+                const pic = document.getElementById('nav-user-photo');
+                if (pic) {
+                    pic.src = user.photoURL;
+                    pic.classList.remove('hidden');
+                }
+                if (document.getElementById('nav-user-icon')) document.getElementById('nav-user-icon').classList.add('hidden');
             } else {
-                document.getElementById('nav-user-photo').classList.add('hidden');
-                document.getElementById('nav-user-icon').classList.remove('hidden');
+                if (document.getElementById('nav-user-photo')) document.getElementById('nav-user-photo').classList.add('hidden');
+                if (document.getElementById('nav-user-icon')) document.getElementById('nav-user-icon').classList.remove('hidden');
             }
+
             // Load Data
             const saved = await getResume(user.uid);
             if (saved && saved.data()) {
@@ -428,8 +472,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else {
             currentUser = null;
-            document.getElementById('nav-guest')?.classList.remove('hidden');
-            document.getElementById('nav-user')?.classList.add('hidden');
+            if (document.getElementById('nav-guest')) document.getElementById('nav-guest').classList.remove('hidden');
+            if (document.getElementById('nav-user')) document.getElementById('nav-user').classList.add('hidden');
 
             // If guest, try to restore local work
             restoreFromLocal();
@@ -446,11 +490,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Inputs with Autosave
     ['name', 'phone', 'email', 'links', 'summary', 'skills'].forEach(f => {
-        document.getElementById('input-' + f)?.addEventListener('input', (e) => {
-            resumeData[f] = e.target.value;
-            renderPreview();
-            saveToLocal();
-            if (currentUser) saveResume(currentUser.uid, resumeData); // Cloud save (debouncing recommended in production)
-        });
+        const input = document.getElementById('input-' + f);
+        if (input) {
+            input.addEventListener('input', (e) => {
+                resumeData[f] = e.target.value;
+                renderPreview();
+                saveToLocal();
+                if (currentUser) saveResume(currentUser.uid, resumeData);
+            });
+        }
     });
 });

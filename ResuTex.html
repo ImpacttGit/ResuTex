@@ -28,8 +28,10 @@
   <p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
   <p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width,
     initial-scale=1.0"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;ResuTeX - ATS-Friendly LaTeX
+  <p class="p1"><span class="Apple-converted-space"> </span>&lt;title&gt;ResuTeX - ATS-Friendly LaTeX
     Resumes&lt;/title&gt;</p>
+  <p class="p1"><span class="Apple-converted-space"> </span>&lt;link rel="icon" type="image/svg+xml"
+    href="public/favicon.svg"&gt;</p>
   <p class="p2"><span class="Apple-converted-space">    </span></p>
   <p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Tailwind CSS --&gt;</p>
   <p class="p1"><span class="Apple-converted-space">    </span>&lt;script
@@ -455,6 +457,19 @@
     </button>
   </div>
   </p>
+  <p class="p1"><span class="Apple-converted-space">                </span>
+    </div>
+
+    <!-- ATS Status -->
+  <div class="bg-gray-800 rounded-lg p-3 mt-4 flex items-center justify-between">
+    <div>
+      <p class="text-xs text-gray-400 mb-1">ATS Compatibility</p>
+      <span class="text-sm font-bold text-green-400 flex items-center">
+        <i class="fa-solid fa-shield-halved mr-2"></i> ATS Safe
+      </span>
+    </div>
+  </div>
+  </p>
   <p class="p2"><br></p>
   <p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Scrollable Form Area --&gt;</p>
   <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex-1 overflow-y-auto
@@ -586,225 +601,292 @@
   <p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Floating Action Buttons --&gt;</p>
   <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="absolute top-4 right-8 flex
     space-x-2 z-10"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="bg-white text-gray-700
-    px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                        </span>&lt;i class="fa-solid fa-eye
-    mr-1"&gt;&lt;/i&gt; Preview</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="downloadPDF()"
-    class="bg-indigo-600 text-white px-4 py-2 rounded shadow text-sm font-medium hover:bg-indigo-700"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                        </span>&lt;i class="fa-solid fa-download
-    mr-2"&gt;&lt;/i&gt; Download PDF</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- The Actual Resume Page --&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="preview-page"
-    class="a4-paper"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- Dynamic Content Loaded Here
-    --&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">        </span>&lt;/main&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- ================= MODALS ================= --&gt;
-  </p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Upgrade / Low Credit Modal --&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="upgrade-modal" class="hidden fixed inset-0
-    bg-gray-900 bg-opacity-50 flex items-center justify-center z-50"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bg-white rounded-lg shadow-xl max-w-md
-    w-full p-6 relative"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>&lt;button onclick="closeModal()" class="absolute
-    top-4 right-4 text-gray-400 hover:text-gray-600"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;i class="fa-solid fa-xmark
-    text-xl"&gt;&lt;/i&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>&lt;/button&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="text-center"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="mx-auto flex items-center
-    justify-center h-12 w-12 rounded-full bg-indigo-100 mb-4"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;i class="fa-solid fa-bolt
-    text-indigo-600 text-xl"&gt;&lt;/i&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;h3 class="text-lg font-medium
-    text-gray-900"&gt;Power Up Your Job Hunt&lt;/h3&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-sm text-gray-500 mt-2"&gt;
-  </p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>You need more AI Credits to perform this
-    action. Upgrade to the &lt;strong&gt;Job Hunter&lt;/strong&gt; plan to get 1,000 credits/month and unlock the full
-    template gallery.</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;/p&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="mt-6 flex flex-col
-    space-y-3"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="w-full bg-indigo-600
-    text-white py-2 rounded-md font-semibold hover:bg-indigo-700"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                        </span>Upgrade for £10/mo</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="w-full bg-white border
-    border-gray-300 text-gray-700 py-2 rounded-md font-semibold hover:bg-gray-50"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                        </span>Buy 500 Credits for £5</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Scanning Overlay --&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="scan-overlay" class="hidden fixed inset-0
-    bg-gray-900 bg-opacity-75 flex items-center justify-center z-50"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bg-white rounded-lg shadow-xl p-8 flex
-    flex-col items-center"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="loader mb-4"&gt;&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>&lt;h3 class="text-lg font-bold
-    text-gray-800"&gt;AI is analyzing your resume...&lt;/h3&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-sm text-gray-500
-    mt-2"&gt;Extracting experience, parsing skills, formatting to LaTeX.&lt;/p&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- JAVASCRIPT LOGIC --&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="border-l-2 border-indigo-200
-    pl-3 mb-4"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text" value="${job.role}"
-    class="w-full text-sm font-bold border-none bg-transparent focus:ring-0 p-0 mb-1" placeholder="Job Title"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text"
-    value="${job.company}" class="w-full text-xs text-gray-500 border-none bg-transparent focus:ring-0 p-0 mb-1"
-    placeholder="Company"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text"
-    value="${job.dates}" class="w-full text-xs text-gray-400 border-none bg-transparent focus:ring-0 p-0 mb-2"
-    placeholder="Dates"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;textarea rows="3" class="w-full
-    text-xs border border-gray-200 rounded p-1"&gt;${job.details.replace(/&lt;br&gt;/g, '\n')}&lt;/textarea&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>`).join('');</p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">            </span>// Render Education inputs dynamic list</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>const eduList =
-    document.getElementById('education-list');</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>eduList.innerHTML =
-    resumeData.education.map((edu, index) =&gt; `</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="border-l-2 border-indigo-200
-    pl-3 mb-4"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text"
-    value="${edu.school}" class="w-full text-sm font-bold border-none bg-transparent focus:ring-0 p-0 mb-1"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text"
-    value="${edu.degree}" class="w-full text-xs text-gray-600 border-none bg-transparent focus:ring-0 p-0 mb-1"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text"
-    value="${edu.dates}" class="w-full text-xs text-gray-400 border-none bg-transparent focus:ring-0 p-0"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>`).join('');</p>
-  <p class="p1"><span class="Apple-converted-space">        </span>}</p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">        </span>// Listen for typing in main inputs</p>
-  <p class="p1"><span class="Apple-converted-space">        </span>['name', 'phone', 'email', 'links', 'summary',
-    'skills'].forEach(field =&gt; {</p>
-  <p class="p1"><span class="Apple-converted-space">           
-    </span>document.getElementById(`input-${field}`).addEventListener('input', (e) =&gt; {</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>resumeData[field] = e.target.value;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>renderPreview();</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>});</p>
-  <p class="p1"><span class="Apple-converted-space">        </span>});</p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">        </span>// --- Render "LaTeX" Preview ---</p>
-  <p class="p1"><span class="Apple-converted-space">        </span>function renderPreview() {</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>const preview =
-    document.getElementById('preview-page');</p>
-  <p class="p2"><span class="Apple-converted-space">            </span></p>
-  <p class="p1"><span class="Apple-converted-space">            </span>// HTML Structure simulating LaTeX 'Modern'
-    template</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>// We use simple divs with specific classes
-    defined in CSS</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>let html = `</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Header --&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="text-center mb-6"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;div
-    class="latex-h1"&gt;${resumeData.name || "Your Name"}&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="text-sm"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                        </span>${resumeData.phone} &lt;span
-    class="mx-1"&gt;|&lt;/span&gt;<span class="Apple-converted-space"> </span></p>
-  <p class="p1"><span class="Apple-converted-space">                        </span>&lt;a href="#" class="text-blue-800
-    underline"&gt;${resumeData.email}&lt;/a&gt; &lt;span class="mx-1"&gt;|&lt;/span&gt;<span
-      class="Apple-converted-space"> </span></p>
-  <p class="p1"><span class="Apple-converted-space">                        </span>${resumeData.links}</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Summary --&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>${resumeData.summary ? `</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;div
-    class="latex-section"&gt;Summary&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="text-justify mb-2"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>${resumeData.summary}</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;` : ''}</p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Experience --&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>${resumeData.experience.length &gt; 0 ? `</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;div
-    class="latex-section"&gt;Experience&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>${resumeData.experience.map(job =&gt; `
-  </p>
-  <p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="mb-3"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="flex
-    justify-between items-baseline"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                                </span>&lt;span
-    class="latex-sub"&gt;${job.role}&lt;/span&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="text-sm
-    italic"&gt;${job.dates}&lt;/span&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-sm
-    latex-italic mb-1"&gt;${job.company}&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-sm ml-2"&gt;
-  </p>
-  <p class="p1"><span class="Apple-converted-space">                                </span>${job.details}</p>
-  <p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>`).join('')}</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;` : ''}</p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Education --&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>${resumeData.education.length &gt; 0 ? `</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;div
-    class="latex-section"&gt;Education&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>${resumeData.education.map(edu =&gt; `
-  </p>
-  <p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="mb-2"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="flex
-    justify-between items-baseline"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                                </span>&lt;span
-    class="latex-sub"&gt;${edu.school}&lt;/span&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="text-sm
-    italic"&gt;${edu.dates}&lt;/span&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                            </span>&lt;div
-    class="text-sm"&gt;${edu.degree}&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-sm
-    text-gray-600 italic"&gt;${edu.details}&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>`).join('')}</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;` : ''}</p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Skills --&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>${resumeData.skills ? `</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;div
-    class="latex-section"&gt;Skills&lt;/div&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="text-sm"&gt;</p>
-  <p class="p1"><span class="Apple-converted-space">                    </span>${resumeData.skills}</p>
-  <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;` : ''}</p>
-  <p class="p1"><span class="Apple-converted-space">            </span>`;</p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">            </span>preview.innerHTML = html;</p>
-  <p class="p1"><span class="Apple-converted-space">        </span>}</p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">        </span>// Initial Render</p>
-  <p class="p1"><span class="Apple-converted-space">        </span>renderPreview();</p>
-  <p class="p2"><br></p>
-  <p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
-  <p class="p1">&lt;/body&gt;</p>
-  <p class="p1">&lt;/html&gt;</p>
+  <p class="p1">
+  <div class="absolute top-4 right-8 flex space-x-2 z-10">
+    <button onclick="togglePrivacyModal()"
+      class="bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50 transition"
+      title="Privacy Settings">
+      <i class="fa-solid fa-user-shield text-indigo-600"></i>
+    </button>
+    <button onclick="scrollToPreview()"
+      class="bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50 transition">
+      <i class="fa-solid fa-eye mr-1"></i> Preview
+    </button>
+    <p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="downloadPDF()"
+      class="bg-indigo-600 text-white px-4 py-2 rounded shadow text-sm font-medium hover:bg-indigo-700"&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                        </span>&lt;i class="fa-solid fa-download
+      mr-2"&gt;&lt;/i&gt; Download PDF</p>
+    <p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+    <p class="p2"><br></p>
+    <p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- The Actual Resume Page --&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="preview-page"
+      class="a4-paper"&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- Dynamic Content Loaded Here
+      --&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+    <p class="p2"><br></p>
+    <p class="p1"><span class="Apple-converted-space">        </span>&lt;/main&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+    <p class="p2"><br></p>
+    <p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- ================= MODALS =================
+      --&gt;
+    </p>
+    <p class="p2"><br></p>
+    <p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Upgrade / Low Credit Modal --&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="upgrade-modal" class="hidden fixed inset-0
+      bg-gray-900 bg-opacity-50 flex items-center justify-center z-50"&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bg-white rounded-lg shadow-xl
+      max-w-md
+      w-full p-6 relative"&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">            </span>&lt;button onclick="closeModal()"
+      class="absolute
+      top-4 right-4 text-gray-400 hover:text-gray-600"&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                </span>&lt;i class="fa-solid fa-xmark
+      text-xl"&gt;&lt;/i&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">            </span>&lt;/button&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="text-center"&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="mx-auto flex items-center
+      justify-center h-12 w-12 rounded-full bg-indigo-100 mb-4"&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                    </span>&lt;i class="fa-solid fa-bolt
+      text-indigo-600 text-xl"&gt;&lt;/i&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                </span>&lt;h3 class="text-lg font-medium
+      text-gray-900"&gt;Power Up Your Job Hunt&lt;/h3&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-sm text-gray-500
+      mt-2"&gt;
+    </p>
+    <p class="p1"><span class="Apple-converted-space">                    </span>You need more AI Credits to perform
+      this
+      action. Upgrade to the &lt;strong&gt;Job Hunter&lt;/strong&gt; plan to get 1,000 credits/month and unlock the full
+      template gallery.</p>
+    <p class="p1"><span class="Apple-converted-space">                </span>&lt;/p&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="mt-6 flex flex-col
+      space-y-3"&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="w-full bg-indigo-600
+      text-white py-2 rounded-md font-semibold hover:bg-indigo-700"&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                        </span>Upgrade for £10/mo</p>
+    <p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="w-full bg-white
+      border
+      border-gray-300 text-gray-700 py-2 rounded-md font-semibold hover:bg-gray-50"&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                        </span>Buy 500 Credits for £5</p>
+    <p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+    <p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+    <p class="p2"><br></p>
+    <p class="p1"><span class="Apple-converted-space">    </span> <!-- Privacy Settings Modal -->
+    <div id="privacy-settings-modal"
+      class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg shadow-xl max-w-sm w-full p-6 relative">
+        <button onclick="togglePrivacyModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+          <i class="fa-solid fa-user-shield text-indigo-600 mr-2"></i> Privacy Mode
+        </h3>
+        <p class="text-xs text-gray-500 mb-4">Blur sensitive info for screenshots or screen sharing.</p>
+
+        <div class="space-y-3">
+          <label class="flex items-center justify-between p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
+            <span class="text-sm font-medium text-gray-700">Blur Name</span>
+            <input type="checkbox" id="blur-name-check" onchange="toggleSpecificBlur('name')"
+              class="h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+          </label>
+          <label class="flex items-center justify-between p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
+            <span class="text-sm font-medium text-gray-700">Blur Email</span>
+            <input type="checkbox" id="blur-email-check" onchange="toggleSpecificBlur('email')"
+              class="h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+          </label>
+          <label class="flex items-center justify-between p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
+            <span class="text-sm font-medium text-gray-700">Blur Phone</span>
+            <input type="checkbox" id="blur-phone-check" onchange="toggleSpecificBlur('phone')"
+              class="h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+          </label>
+          <label class="flex items-center justify-between p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
+            <span class="text-sm font-medium text-gray-700">Blur Links</span>
+            <input type="checkbox" id="blur-links-check" onchange="toggleSpecificBlur('links')"
+              class="h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+          </label>
+        </div>
+
+        <div class="mt-6 text-center">
+          <button onclick="togglePrivacyModal()"
+            class="w-full bg-indigo-600 text-white py-2 rounded-md font-semibold hover:bg-indigo-700">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scanning Overlay -->
+    <div id="scan-overlay" class="hidden fixed inset-0
+    bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
+      <p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bg-white rounded-lg shadow-xl p-8
+        flex
+        flex-col items-center"&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="loader mb-4"&gt;&lt;/div&gt;
+      </p>
+      <p class="p1"><span class="Apple-converted-space">            </span>&lt;h3 class="text-lg font-bold
+        text-gray-800"&gt;AI is analyzing your resume...&lt;/h3&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-sm text-gray-500
+        mt-2"&gt;Extracting experience, parsing skills, formatting to LaTeX.&lt;/p&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+      <p class="p2"><br></p>
+      <p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- JAVASCRIPT LOGIC --&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="border-l-2
+        border-indigo-200
+        pl-3 mb-4"&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text"
+        value="${job.role}"
+        class="w-full text-sm font-bold border-none bg-transparent focus:ring-0 p-0 mb-1" placeholder="Job Title"&gt;
+      </p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text"
+        value="${job.company}" class="w-full text-xs text-gray-500 border-none bg-transparent focus:ring-0 p-0 mb-1"
+        placeholder="Company"&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text"
+        value="${job.dates}" class="w-full text-xs text-gray-400 border-none bg-transparent focus:ring-0 p-0 mb-2"
+        placeholder="Dates"&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>&lt;textarea rows="3" class="w-full
+        text-xs border border-gray-200 rounded p-1"&gt;${job.details.replace(/&lt;br&gt;/g, '\n')}&lt;/textarea&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">            </span>`).join('');</p>
+      <p class="p2"><br></p>
+      <p class="p1"><span class="Apple-converted-space">            </span>// Render Education inputs dynamic list</p>
+      <p class="p1"><span class="Apple-converted-space">            </span>const eduList =
+        document.getElementById('education-list');</p>
+      <p class="p1"><span class="Apple-converted-space">            </span>eduList.innerHTML =
+        resumeData.education.map((edu, index) =&gt; `</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="border-l-2
+        border-indigo-200
+        pl-3 mb-4"&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text"
+        value="${edu.school}" class="w-full text-sm font-bold border-none bg-transparent focus:ring-0 p-0 mb-1"&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text"
+        value="${edu.degree}" class="w-full text-xs text-gray-600 border-none bg-transparent focus:ring-0 p-0 mb-1"&gt;
+      </p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text"
+        value="${edu.dates}" class="w-full text-xs text-gray-400 border-none bg-transparent focus:ring-0 p-0"&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">            </span>`).join('');</p>
+      <p class="p1"><span class="Apple-converted-space">        </span>}</p>
+      <p class="p2"><br></p>
+      <p class="p1"><span class="Apple-converted-space">        </span>// Listen for typing in main inputs</p>
+      <p class="p1"><span class="Apple-converted-space">        </span>['name', 'phone', 'email', 'links', 'summary',
+        'skills'].forEach(field =&gt; {</p>
+      <p class="p1"><span class="Apple-converted-space">           
+        </span>document.getElementById(`input-${field}`).addEventListener('input', (e) =&gt; {</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>resumeData[field] = e.target.value;</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>renderPreview();</p>
+      <p class="p1"><span class="Apple-converted-space">            </span>});</p>
+      <p class="p1"><span class="Apple-converted-space">        </span>});</p>
+      <p class="p2"><br></p>
+      <p class="p1"><span class="Apple-converted-space">        </span>// --- Render "LaTeX" Preview ---</p>
+      <p class="p1"><span class="Apple-converted-space">        </span>function renderPreview() {</p>
+      <p class="p1"><span class="Apple-converted-space">            </span>const preview =
+        document.getElementById('preview-page');</p>
+      <p class="p2"><span class="Apple-converted-space">            </span></p>
+      <p class="p1"><span class="Apple-converted-space">            </span>// HTML Structure simulating LaTeX 'Modern'
+        template</p>
+      <p class="p1"><span class="Apple-converted-space">            </span>// We use simple divs with specific classes
+        defined in CSS</p>
+      <p class="p1"><span class="Apple-converted-space">            </span>let html = `</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Header --&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="text-center mb-6"&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>&lt;div
+        class="latex-h1"&gt;${resumeData.name || "Your Name"}&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="text-sm"&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                        </span>${resumeData.phone} &lt;span
+        class="mx-1"&gt;|&lt;/span&gt;<span class="Apple-converted-space"> </span></p>
+      <p class="p1"><span class="Apple-converted-space">                        </span>&lt;a href="#"
+        class="text-blue-800
+        underline"&gt;${resumeData.email}&lt;/a&gt; &lt;span class="mx-1"&gt;|&lt;/span&gt;<span
+          class="Apple-converted-space"> </span></p>
+      <p class="p1"><span class="Apple-converted-space">                        </span>${resumeData.links}</p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+      <p class="p2"><br></p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Summary --&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>${resumeData.summary ? `</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;div
+        class="latex-section"&gt;Summary&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="text-justify mb-2"&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>${resumeData.summary}</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;` : ''}</p>
+      <p class="p2"><br></p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Experience --&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>${resumeData.experience.length &gt; 0 ? `
+      </p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;div
+        class="latex-section"&gt;Experience&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>${resumeData.experience.map(job =&gt;
+        `
+      </p>
+      <p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="mb-3"&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="flex
+        justify-between items-baseline"&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                                </span>&lt;span
+        class="latex-sub"&gt;${job.role}&lt;/span&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="text-sm
+        italic"&gt;${job.dates}&lt;/span&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-sm
+        latex-italic mb-1"&gt;${job.company}&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-sm
+        ml-2"&gt;
+      </p>
+      <p class="p1"><span class="Apple-converted-space">                                </span>${job.details}</p>
+      <p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>`).join('')}</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;` : ''}</p>
+      <p class="p2"><br></p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Education --&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>${resumeData.education.length &gt; 0 ? `
+      </p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;div
+        class="latex-section"&gt;Education&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>${resumeData.education.map(edu =&gt;
+        `
+      </p>
+      <p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="mb-2"&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="flex
+        justify-between items-baseline"&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                                </span>&lt;span
+        class="latex-sub"&gt;${edu.school}&lt;/span&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="text-sm
+        italic"&gt;${edu.dates}&lt;/span&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                            </span>&lt;div
+        class="text-sm"&gt;${edu.degree}&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-sm
+        text-gray-600 italic"&gt;${edu.details}&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>`).join('')}</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;` : ''}</p>
+      <p class="p2"><br></p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Skills --&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>${resumeData.skills ? `</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;div
+        class="latex-section"&gt;Skills&lt;/div&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="text-sm"&gt;</p>
+      <p class="p1"><span class="Apple-converted-space">                    </span>${resumeData.skills}</p>
+      <p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;` : ''}</p>
+      <p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+      <p class="p2"><br></p>
+      <p class="p1"><span class="Apple-converted-space">            </span>preview.innerHTML = html;</p>
+      <p class="p1"><span class="Apple-converted-space">        </span>}</p>
+      <p class="p2"><br></p>
+      <p class="p1"><span class="Apple-converted-space">        </span>// Initial Render</p>
+      <p class="p1"><span class="Apple-converted-space">        </span>renderPreview();</p>
+      <p class="p2"><br></p>
+      <p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+      <p class="p1">&lt;/body&gt;</p>
+      <p class="p1">&lt;/html&gt;</p>
 </body>
 
 </html>
