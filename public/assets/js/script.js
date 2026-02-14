@@ -609,43 +609,36 @@ window.updateEdu = (index, field, value) => {
     if (currentUser) saveResume(currentUser.uid, resumeData, currentResumeId);
 };
 window.downloadPDF = async function () {
-    const tier = currentUserProfile?.tier || 'free';
-    if (tier === 'free') {
-        await showAlert("High-quality LaTeX PDF export is a premium feature! We've opened the print dialog for you instead. Upgrade to Job Hunter or Student for professional PDF generation.", "Premium Feature");
-        window.print();
-        return;
-    }
-
-    // 1. Get Source
-    let tex;
-    if (isAdvancedMode) {
-        tex = document.getElementById('latex-code-input').value;
-    } else {
-        tex = generateLaTeXSource(false, true); // Real preamble for High Quality
-    }
-
-    // 2. Alert user
+    const originalPreviewHTML = document.getElementById('preview-page').innerHTML;
     const btn = document.getElementById('download-pdf-btn');
-    const original = btn.innerHTML;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Compiling...';
-    btn.disabled = true;
+    const originalBtnHTML = btn.innerHTML;
 
     try {
-        // 3. Submit to hidden cloud form
-        document.getElementById('cloud-latex-text').value = tex;
-        document.getElementById('cloud-latex-form').submit();
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Preparing...';
+        btn.disabled = true;
 
-        // 4. Reset button after a delay
-        setTimeout(() => {
-            btn.innerHTML = original;
-            btn.disabled = false;
-            showAlert("Your high-quality PDF is being generated. It will open in a new tab shortly.", "Success");
-        }, 3000);
-    } catch (e) {
-        console.error(e);
-        showAlert("Cloud compilation failed. Falling back to local print.", "Export Error");
+        // 1. Render UNMASKED version for print
+        if (isAdvancedMode) {
+            const code = document.getElementById('latex-code-input').value;
+            _renderLocalLatex(code);
+        } else {
+            // Simplified LaTeX.js render without privacy masking
+            const texSource = generateLaTeXSource(false, false);
+            _renderLocalLatex(texSource);
+        }
+
+        // Give browser a moment to layout
+        await new Promise(r => setTimeout(r, 400));
+
+        // 2. Open Print Dialog
+        await showAlert("For the best result, set 'Destination' to 'Save as PDF' in the following print dialog. This ensures a high-quality, ATS-friendly vector PDF.", "Ready to Export");
+
         window.print();
-        btn.innerHTML = original;
+
+    } finally {
+        // 3. Restore UI (including masks)
+        document.getElementById('preview-page').innerHTML = originalPreviewHTML;
+        btn.innerHTML = originalBtnHTML;
         btn.disabled = false;
     }
 };
@@ -942,49 +935,7 @@ window.checkoutPlan = async function (tierId) {
 
 // (Moved to top area)
 
-window.cloudRecompileLatex = async function () {
-    const rawCode = document.getElementById('latex-code-input').value;
-    const btn = event.currentTarget || document.querySelector('button[onclick="cloudRecompileLatex()"]');
-    const original = btn.innerHTML;
 
-    btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up fa-bounce mr-2"></i>Compiling...';
-    btn.disabled = true;
-
-    try {
-        // 1. Prepare Hidden Form
-        const form = document.getElementById('cloud-latex-form');
-        const input = document.getElementById('cloud-latex-text');
-        input.value = rawCode;
-
-        // 2. Prepare Preview Container with Iframe
-        const previewContainer = document.getElementById('preview-page');
-        previewContainer.innerHTML = `
-            <div class="w-full h-full flex flex-col">
-                <div class="bg-indigo-50 text-indigo-700 text-[10px] px-3 py-1 border-b border-indigo-100 flex justify-between items-center">
-                    <span><i class="fa-solid fa-cloud mr-1"></i> Cloud Rendered PDF</span>
-                    <button onclick="recompileLatex()" class="hover:underline font-bold">Back to Fast Preview</button>
-                </div>
-                <iframe name="preview-iframe" id="preview-iframe" class="flex-1 w-full border-none bg-gray-100"></iframe>
-            </div>
-        `;
-
-        // 3. Submit form to iframe target
-        form.submit();
-
-        // 4. Cleanup UI State after a delay (since we can't detect when iframe finishes loading easily)
-        setTimeout(() => {
-            btn.innerHTML = original;
-            btn.disabled = false;
-        }, 2000);
-
-    } catch (e) {
-        console.error(e);
-        await showAlert("Cloud compilation failed. Falling back to local preview.", "Preview Error");
-        _renderLocalLatex(rawCode);
-        btn.innerHTML = original;
-        btn.disabled = false;
-    }
-};
 
 function _renderLocalLatex(rawCode) {
     let previewCode = rawCode;
@@ -1028,14 +979,10 @@ function _renderLocalLatex(rawCode) {
         previewContainer.appendChild(wrapper);
 
     } catch (e) {
+        console.warn("LaTeX rendering failed, falling back to HTML:", e.message);
         const previewContainer = document.getElementById('preview-page');
         if (previewContainer) {
-            previewContainer.innerHTML = `<div class="p-6 text-red-600 font-mono text-sm bg-red-50 border border-red-100 rounded-lg">
-                <h4 class="font-bold mb-2"><i class="fa-solid fa-triangle-exclamation mr-2"></i>LaTeX Preview Error</h4>
-                <p class="mb-2 text-xs text-gray-600">Note: Your code is probably valid LaTeX, but our live-preview engine (LaTeX.js) has limitations. Use "Export to LaTeX" for the full result.</p>
-                <hr class="my-2 border-red-200">
-                <pre class="whitespace-pre-wrap">${e.message}</pre>
-            </div>`;
+            _renderHTMLFallback(previewContainer, false); // Render unmasked HTML fallback
         }
     }
 }
@@ -1375,9 +1322,12 @@ function _doRender() {
     _renderHTMLFallback(previewContainer);
 }
 
-function _renderHTMLFallback(previewContainer) {
+function _renderHTMLFallback(previewContainer, forceApplyMask = null) {
     const privacySettings = JSON.parse(localStorage.getItem('resutex_privacy') || '{}');
     const masterEnabled = localStorage.getItem('resutex_privacy_master') === 'true';
+
+    // Use forced value if provided, otherwise respect master toggle
+    const shouldMask = forceApplyMask !== null ? forceApplyMask : masterEnabled;
 
     const sanitize = (str) => {
         if (!str) return '';
@@ -1388,7 +1338,7 @@ function _renderHTMLFallback(previewContainer) {
 
     const mask = (text, field) => {
         if (!text) return '';
-        if (masterEnabled && privacySettings[field]) {
+        if (shouldMask && privacySettings[field]) {
             if (field === 'name') return text.replace(/[a-zA-Z]/g, 'X');
             if (field === 'email') return 'xxx@example.com';
             if (field === 'phone') return 'XXX-XXX-XXXX';
