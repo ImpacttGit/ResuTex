@@ -35,6 +35,8 @@ export async function registerUser(name, email, password) {
                 name: name,
                 email: email,
                 credits: 5,
+                tier: "free", // free, monthly, yearly, owner
+                role: "user",   // user, admin
                 photoURL: null,
                 createdAt: new Date()
             });
@@ -138,4 +140,21 @@ export async function updateUserProfile(user, displayName, photoURL) {
     if (photoURL) firestoreUpdates.photoURL = photoURL;
     await updateDoc(doc(db, "users", user.uid), firestoreUpdates);
     return user;
+}
+
+export async function updateUserTier(userId, tier) {
+    return updateDoc(doc(db, "users", userId), { tier: tier });
+}
+
+export async function updateUserCredits(userId, newCredits) {
+    return updateDoc(doc(db, "users", userId), { credits: newCredits });
+}
+
+export async function getUserProfile(userId) {
+    const docRef = doc(db, "users", userId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        return docSnap.data();
+    }
+    return null;
 }

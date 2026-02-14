@@ -1,7 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+body,
+html {
+    font-family: 'Inter', -apple-system, system-ui, sans-serif !important;
+    font-size: 16px !important;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
 
-body {
-    font-family: 'Inter', sans-serif;
+h1,
+h2,
+h3,
+h4,
+p,
+span,
+a,
+button,
+input,
+textarea {
+    font-family: inherit !important;
+}
+
+/* LaTeX.js Section Underline to match Jake's Resume */
+.a4-paper section h1 {
+    border-bottom: 1px solid #000;
+    width: 100%;
+    margin-bottom: 5pt;
+    font-variant: small-caps;
+    font-size: 1.2em;
+    font-weight: normal;
 }
 
 /* A4 Paper Styling */
@@ -12,14 +37,18 @@ body {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     margin: 2rem auto;
     padding: 2.5rem;
-    /* ~1 inch margin */
     box-sizing: border-box;
     color: #1a202c;
-    /* gray-900 */
     position: relative;
     overflow: hidden;
-    font-family: 'Times New Roman', Times, serif;
-    /* LaTeX default look */
+    /* LaTeX default look scoped to paper ONLY */
+    font-family: 'Merriweather', serif;
+}
+
+/* LaTeX.js generates its own classes; we need to ensure they don't leak out 
+   or at least the UI is protected. LaTeX.js uses 'katex' and other classes. */
+.a4-paper * {
+    font-family: inherit;
 }
 
 /* Spinner */
@@ -191,4 +220,34 @@ html.dark .a4-paper .border-gray-200 {
 .toggle-checkbox:checked {
     left: auto;
     right: 0;
+}
+
+/* Plan Badges */
+.plan-badge {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    display: inline-block;
+}
+
+.plan-free {
+    background: #4b5563;
+    color: white;
+}
+
+.plan-monthly {
+    background: #4f46e5;
+    color: white;
+}
+
+.plan-yearly {
+    background: #10b981;
+    color: white;
+}
+
+.plan-owner {
+    background: #f59e0b;
+    color: white;
 }

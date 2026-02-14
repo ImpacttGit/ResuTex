@@ -1,5 +1,6 @@
-import { monitorAuthState, saveResume, getResume, createResume, getUserResumes, deleteResume, logoutUser, updateUserProfile, resetUserPassword } from './firebase-app.js?v=2';
+import { monitorAuthState, saveResume, getResume, createResume, getUserResumes, deleteResume, logoutUser, updateUserProfile, resetUserPassword, getUserProfile, updateUserTier, updateUserCredits } from './firebase-app.js?v=3';
 let currentUser = null;
+let currentUserProfile = null;
 let currentResumeId = null;
 let allResumes = [];
 let resumeData = {
@@ -17,7 +18,9 @@ let resumeData = {
     ],
     skills: "JavaScript, TypeScript, React, Node.js, Python, AWS, Docker, Git"
 };
-let credits = 50; // Assuming this was the default
+let isAdvancedMode = false;
+let customLatexCode = "";
+let credits = 0; // Will be synced from Firestore
 
 // --- GLOBAL WINDOW FUNCTIONS ---
 window.logoutUser = logoutUser;
@@ -360,10 +363,16 @@ window.useAICredit = (event, amount, successMsg) => {
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Thinking...';
     btn.disabled = true;
 
-    setTimeout(() => {
+    setTimeout(async () => {
         credits -= amount;
         document.getElementById('credit-balance').textContent = credits;
-        alert(successMsg + " (Simulated AI feature)");
+
+        // Sync to Firestore
+        if (currentUser) {
+            await updateUserCredits(currentUser.uid, credits);
+        }
+
+        alert(successMsg + " (Credits synced to Firestore)");
         btn.innerHTML = originalContent;
         btn.disabled = false;
     }, 1500);
@@ -594,6 +603,98 @@ window.toggleJobPanel = function () {
     }
 };
 
+// --- ADVANCED MODE LOGIC ---
+window.toggleAdvancedMode = function () {
+    const toggle = document.getElementById('advanced-mode-switch');
+    const isChecked = toggle.checked;
+
+    // 1. Tier Check
+    const tier = currentUserProfile?.tier || 'free';
+    if (tier === 'free') {
+        toggle.checked = false;
+        alert("Advanced Mode (Direct LaTeX Editing) is a premium feature. Please upgrade to the Job Hunter or Student plan.");
+        window.viewPlans();
+        return;
+    }
+
+    // 2. Switching TO Advanced Mode
+    if (isChecked) {
+        if (!confirm("Entering Advanced Mode allow you to edit the LaTeX code directly.\n\n⚠️ WARNING: Changes made here are NOT saved back to the form. If you switch back to Simple Mode, your manual code edits will be lost.")) {
+            toggle.checked = false;
+            return;
+        }
+
+        isAdvancedMode = true;
+
+        // Switch UI
+        document.querySelector('.w-1/2').classList.add('hidden'); // Hide Form Column
+        document.getElementById('advanced-toolbar').classList.remove('hidden');
+        document.getElementById('advanced-editor').classList.remove('hidden');
+
+        // Populate Editor
+        // We generate "Export" quality LaTeX for the editor so they see the real code
+        customLatexCode = generateLaTeXSource(false, true);
+        document.getElementById('latex-code-input').value = customLatexCode;
+
+        // Re-render preview with this code
+        recompileLatex();
+
+    } else {
+        // 3. Switching BACK to Simple Mode
+        if (!confirm("⚠️ Are you sure? Switching back to Simple Mode will DISCARD your manual code changes and revert to the data in the form.")) {
+            toggle.checked = true;
+            return;
+        }
+
+        isAdvancedMode = false;
+        customLatexCode = "";
+
+        // Switch UI
+        document.querySelector('.w-1/2').classList.remove('hidden');
+        document.getElementById('advanced-toolbar').classList.add('hidden');
+        document.getElementById('advanced-editor').classList.add('hidden');
+
+        // Re-render from Form Data
+        renderPreview();
+    }
+};
+
+window.recompileLatex = function () {
+    const code = document.getElementById('latex-code-input').value;
+    customLatexCode = code;
+
+    // Render using LaTeX.js
+    const generator = new latexjs.HtmlGenerator({ hyphenate: false });
+    try {
+        const parsed = latexjs.parse(code, { generator: generator });
+
+        // Clear and Append
+        const previewContainer = document.getElementById('preview-page');
+        previewContainer.innerHTML = '';
+
+        // Style Isolation (same as before)
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .latex-container { font-family: 'Merriweather', serif !important; color: #000 !important; }
+            .latex-container h1, .latex-container h2, .latex-container h3 { font-family: 'Merriweather', serif !important; }
+        `;
+        previewContainer.appendChild(style);
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'latex-container';
+        wrapper.appendChild(parsed.domFragment());
+        previewContainer.appendChild(wrapper);
+
+    } catch (e) {
+        console.error("LaTeX Compile Error:", e);
+        // Show error to user in a friendly way?
+        const previewContainer = document.getElementById('preview-page');
+        previewContainer.innerHTML = `<div class="p-4 text-red-600 font-mono text-sm bg-red-50 border border-red-200 rounded">
+            <strong>Compile Error:</strong><br>${e.message}
+        </div>`;
+    }
+};
+
 // --- DATA PORTABILITY ---
 window.exportJSON = function () {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(resumeData, null, 2));
@@ -630,13 +731,24 @@ window.importJSON = function (event) {
 };
 
 // --- LaTeX SOURCE GENERATION ---
-function generateLaTeXSource(applyMask) {
+// --- LaTeX SOURCE GENERATION (Jake's Resume Style) ---
+function generateLaTeXSource(applyMask, isForExport = false) {
     const privacySettings = JSON.parse(localStorage.getItem('resutex_privacy') || '{}');
     const masterEnabled = localStorage.getItem('resutex_privacy_master') === 'true';
-    // Escape special LaTeX characters
+
+    // Alignment helper: LaTeX.js doesn't support \extracolsep{\fill} well, 
+    // so we use a simple tabular for preview and the real deal for export.
+    const startSubheading = (l1, r1, l2, r2) => {
+        if (isForExport) {
+            return `\\begin{tabular*}{\\textwidth}{l@{\\extracolsep{\\fill}}r}\n  \\textbf{${l1}} & ${r1} \\\\\n  \\textit{\\small ${l2}} & \\textit{\\small ${r2}} \\\\\n\\end{tabular*}\\vspace{-7pt}\n\n`;
+        } else {
+            // Simplified for LaTeX.js preview
+            return `\\textbf{${l1}} \\hfill ${r1} \\\\\n\\textit{\\small ${l2}} \\hfill \\textit{\\small ${r2}}\n\n`;
+        }
+    };
+
     const esc = (str) => {
         if (!str) return '';
-        // Order matters! Escape backslash first.
         return str
             .replace(/\\/g, '\\textbackslash ')
             .replace(/&/g, '\\&')
@@ -649,6 +761,7 @@ function generateLaTeXSource(applyMask) {
             .replace(/~/g, '\\textasciitilde ')
             .replace(/\^/g, '\\textasciicircum ');
     };
+
     const mask = (text, field) => {
         if (!text) return '';
         if (applyMask && masterEnabled && privacySettings[field]) {
@@ -660,52 +773,107 @@ function generateLaTeXSource(applyMask) {
         }
         return esc(text);
     };
+
     const r = resumeData;
-    const contactParts = [mask(r.email, 'email'), mask(r.phone, 'phone'), mask(r.links, 'links')].filter(Boolean);
-    const contactLine = contactParts.join(' | ');
-    let tex = '\\documentclass{article}\n\\begin{document}\n\n';
-    tex += '\\begin{center}\n';
-    tex += '{\\LARGE \\textbf{' + mask(r.name, 'name') + '}}\\\\[0.3em]\n';
-    tex += contactLine + '\n';
-    tex += '\\end{center}\n\n';
-    if (r.summary) {
-        tex += '\\section*{Summary}\n' + esc(r.summary) + '\n\n';
+
+    let tex = "";
+    if (isForExport) {
+        // Full Jake's Resume Preamble
+        tex += `%-------------------------\n% Resume in Latex\n% Generated by ResuTeX\n%------------------------\n\n`;
+        tex += `\\documentclass[letterpaper,11pt]{article}\n\n`;
+        tex += `\\usepackage{latexsym}\n\\usepackage[empty]{fullpage}\n\\usepackage{titlesec}\n\\usepackage{marvosym}\n\\usepackage[usenames,dvipsnames]{color}\n\\usepackage{verbatim}\n\\usepackage{enumitem}\n\\usepackage[hidelinks]{hyperref}\n\\usepackage{fancyhdr}\n\\usepackage[english]{babel}\n\\usepackage{tabularx}\n\\input{glyphtounicode}\n\n`;
+        tex += `\\pagestyle{fancy}\n\\fancyhf{} % clear all header and footer fields\n\\fancyfoot{}\n\\renewcommand{\\headrulewidth}{0pt}\n\\renewcommand{\\footrulewidth}{0pt}\n\n`;
+        tex += `% Adjust margins\n\\addtolength{\\oddsidemargin}{-0.5in}\n\\addtolength{\\evensidemargin}{-0.5in}\n\\addtolength{\\textwidth}{1in}\n\\addtolength{\\topmargin}{-.5in}\n\\addtolength{\\textheight}{1.0in}\n\n`;
+        tex += `\\urlstyle{same}\n\\raggedbottom\n\\raggedright\n\\setlength{\\tabcolsep}{0in}\n\n`;
+        tex += `% Sections formatting\n\\titleformat{\\section}{\n  \\vspace{-4pt}\\scshape\\raggedright\\large\n}{}{0em}{}[\\color{black}\\titlerule \\vspace{-5pt}]\n\n`;
+        tex += `\\pdfgentounicode=1\n\n\\begin{document}\n\n`;
+    } else {
+        // Simplified for LaTeX.js preview
+        tex += `\\documentclass{article}\n\\begin{document}\n\n`;
     }
-    if (r.experience && r.experience.length > 0) {
-        tex += '\\section*{Experience}\n';
-        r.experience.forEach(exp => {
-            tex += '\\textbf{' + esc(exp.role) + '} --- ' + esc(exp.company) + ' \\hfill ' + esc(exp.dates) + '\n\n';
-            if (exp.details) {
-                const bullets = exp.details.split('\n').filter(d => d.trim());
-                if (bullets.length > 0) {
-                    tex += '\\begin{itemize}\n';
-                    bullets.forEach(b => {
-                        const clean = b.replace(/^[\u2022\-\*]\s*/, '');
-                        tex += '\\item ' + esc(clean) + '\n';
-                    });
-                    tex += '\\end{itemize}\n';
+
+    // --- HEADING ---
+    tex += `\\begin{center}\n`;
+    tex += `    \\textbf{\\Huge \\scshape ${mask(r.name, 'name')}} \\\\ \\vspace{1pt}\n`;
+    const contactParts = [mask(r.phone, 'phone'), mask(r.email, 'email'), mask(r.links, 'links')].filter(Boolean);
+    tex += `    \\small ${contactParts.join(' $|$ ')}\n`;
+    tex += `\\end{center}\n\n`;
+
+    // --- SUMMARY (Optional) ---
+    if (r.summary) {
+        tex += `\\section{Summary}\n${esc(r.summary)}\n\n`;
+    }
+
+    // --- EDUCATION ---
+    if (r.education && r.education.length > 0) {
+        tex += `\\section{Education}\n`;
+        if (isForExport) tex += `\\begin{itemize}[leftmargin=0.15in, label={}]\n`;
+        r.education.forEach(edu => {
+            tex += startSubheading(esc(edu.school), esc(edu.dates), esc(edu.degree), "");
+            if (edu.details) {
+                if (isForExport) {
+                    tex += `\\begin{itemize}\n\\item \\small{${esc(edu.details)}}\n\\end{itemize}\n`;
+                } else {
+                    tex += `\\small{${esc(edu.details)}}\n\n`;
                 }
             }
         });
+        if (isForExport) tex += `\\end{itemize}\n\n`;
     }
-    if (r.education && r.education.length > 0) {
-        tex += '\\section*{Education}\n';
-        r.education.forEach(edu => {
-            tex += '\\textbf{' + esc(edu.school) + '} \\hfill ' + esc(edu.dates) + '\n\n';
-            tex += '\\textit{' + esc(edu.degree) + '}';
-            if (edu.details) tex += '\n\n' + esc(edu.details);
-            tex += '\n\n';
+
+    // --- EXPERIENCE ---
+    if (r.experience && r.experience.length > 0) {
+        tex += `\\section{Experience}\n`;
+        if (isForExport) tex += `\\begin{itemize}[leftmargin=0.15in, label={}]\n`;
+        r.experience.forEach(exp => {
+            // Role and Company/Dates/Loc (Jake's uses Company first usually, but we swap to match user inputs)
+            tex += startSubheading(esc(exp.role), esc(exp.dates), esc(exp.company), "");
+
+            if (exp.details) {
+                const bullets = exp.details.split('\n').filter(d => d.trim());
+                if (bullets.length > 0) {
+                    tex += `\\begin{itemize}\n`;
+                    bullets.forEach(b => {
+                        const clean = b.replace(/^[\u2022\-\*]\s*/, '');
+                        tex += `  \\item \\small{${esc(clean)}}\n`;
+                    });
+                    tex += `\\end{itemize}\n`;
+                }
+            }
         });
+        if (isForExport) tex += `\\end{itemize}\n\n`;
     }
+
+    // --- SKILLS ---
     if (r.skills) {
-        tex += '\\section*{Skills}\n' + esc(r.skills) + '\n';
+        tex += `\\section{Technical Skills}\n`;
+        if (isForExport) {
+            tex += `\\begin{itemize}[leftmargin=0.15in, label={}]\n  \\small{\\item{${esc(r.skills)}}}\n\\end{itemize}\n`;
+        } else {
+            tex += `\\small{${esc(r.skills)}}\n`;
+        }
     }
-    tex += '\n\\end{document}\n';
+
+    tex += `\\end{document}\n`;
     return tex;
 }
 
 window.exportToTeX = function () {
-    const tex = generateLaTeXSource(false);
+    // Tier Check
+    const tier = currentUserProfile?.tier || 'free';
+    if (tier === 'free') {
+        alert("The .tex source export is a premium feature! Please upgrade to the Job Hunter or Student plan to unlock it.");
+        window.viewPlans();
+        return;
+    }
+
+    let tex;
+    if (isAdvancedMode) {
+        tex = document.getElementById('latex-code-input').value;
+    } else {
+        tex = generateLaTeXSource(false, true); // Use real hfill for export
+    }
+
     const blob = new Blob([tex], { type: 'text/x-tex' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -803,7 +971,7 @@ function _doRender() {
     // Try LaTeX.js rendering first
     if (typeof latexjs !== 'undefined') {
         try {
-            const texSource = generateLaTeXSource(true);
+            const texSource = generateLaTeXSource(true, false); // No hfill for preview
             const generator = new latexjs.HtmlGenerator({ hyphenate: false });
             const parsed = latexjs.parse(texSource, { generator: generator });
 
@@ -812,10 +980,21 @@ function _doRender() {
                 const styles = parsed.stylesAndScripts("https://cdn.jsdelivr.net/npm/latex.js/dist/");
                 document.head.appendChild(styles);
                 window._latexStylesLoaded = true;
+
+                // Protect global UI from LaTeX.js "body" styles
+                const styleFix = document.createElement('style');
+                styleFix.textContent = `
+                    body { font-size: 16px !important; overflow: auto !important; height: auto !important; }
+                    .latex-container { width: 100%; height: 100%; }
+                `;
+                document.head.appendChild(styleFix);
             }
 
             previewContainer.innerHTML = '';
-            previewContainer.appendChild(parsed.domFragment());
+            const wrapper = document.createElement('div');
+            wrapper.className = 'latex-container';
+            wrapper.appendChild(parsed.domFragment());
+            previewContainer.appendChild(wrapper);
             return;
         } catch (latexErr) {
             console.warn("LaTeX.js parse error, falling back to HTML preview:", latexErr.message);
@@ -902,6 +1081,36 @@ function init() {
         console.log("Auth state changed. User:", user ? user.uid : "None");
         if (user) {
             currentUser = user;
+
+            // Fetch Profile/Tier
+            getUserProfile(user.uid).then(async (profile) => {
+                if (profile && !profile.tier) {
+                    console.log("Tier missing for existing user, initializing to free...");
+                    await updateUserTier(user.uid, "free");
+                    profile.tier = "free";
+                }
+
+                currentUserProfile = profile;
+
+                // Sync Credits
+                credits = profile?.credits || 0;
+                if (document.getElementById('credit-balance')) {
+                    document.getElementById('credit-balance').textContent = credits;
+                }
+
+                // Update Tier Badge
+                const badge = document.getElementById('user-plan-badge');
+                if (badge) {
+                    badge.className = `ml-auto plan-badge plan-${profile?.tier || 'free'}`;
+                    badge.textContent = (profile?.tier || 'free').charAt(0).toUpperCase() + (profile?.tier || 'free').slice(1);
+                    badge.classList.remove('hidden');
+                }
+
+                if (profile?.tier) {
+                    console.log("User Tier:", profile.tier);
+                }
+            });
+
             // UI Updates
             if (document.getElementById('nav-guest')) document.getElementById('nav-guest').classList.add('hidden');
             if (document.getElementById('nav-user')) document.getElementById('nav-user').classList.remove('hidden');

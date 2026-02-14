@@ -362,6 +362,7 @@
             <button onclick="goHome()" class="p-4 border-b border-gray-800 flex items-center w-full text-left">
                 <i class="fa-solid fa-file-code text-indigo-500 text-xl mr-2"></i>
                 <span class="font-bold text-lg">ResuTeX</span>
+                <span id="user-plan-badge" class="ml-auto plan-badge plan-free hidden">Free</span>
             </button>
 
             <div class="p-4">
@@ -474,6 +475,22 @@
                     </div>
                 </div>
 
+                <!-- Advanced Editor Toolbar (Hidden by default) -->
+                <div id="advanced-toolbar"
+                    class="hidden h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white shrink-0">
+                    <div class="flex items-center">
+                        <h2 class="font-bold text-gray-800 mr-4">Advanced Editor (LaTeX)</h2>
+                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-bold">PRO</span>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="recompileLatex()"
+                            class="flex items-center text-sm bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
+                            <i class="fa-solid fa-rotate-right mr-2"></i>
+                            Recompile
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Scrollable Form Area -->
                 <div class="flex-1 overflow-y-auto custom-scroll p-6 space-y-6">
 
@@ -574,6 +591,20 @@
 
                 <!-- Floating Action Buttons -->
                 <div class="absolute top-4 right-8 flex space-x-2 z-10 noprint">
+
+                    <!-- Advanced Mode Toggle -->
+                    <div class="flex items-center bg-white px-3 py-2 rounded shadow space-x-2 mr-2">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">Advanced Mode</span>
+                        <div
+                            class="relative inline-block w-10 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="toggle" id="advanced-mode-switch"
+                                onchange="toggleAdvancedMode()"
+                                class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300" />
+                            <label for="advanced-mode-switch"
+                                class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                        </div>
+                    </div>
+
                     <!-- Master Privacy Toggle -->
                     <div class="flex items-center bg-white px-3 py-2 rounded shadow space-x-2">
                         <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">Hide Sensitive</span>
