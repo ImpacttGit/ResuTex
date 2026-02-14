@@ -310,3 +310,53 @@ function renderPreview() {
 
     preview.innerHTML = html;
 }
+
+// --- PDF Generation ---
+window.downloadPDF = async function () {
+    const { jsPDF } = window.jspdf;
+    const preview = document.getElementById('preview-page');
+
+    // Temporarily remove shadow for clean PDF
+    const originalShadow = preview.style.boxShadow;
+    preview.style.boxShadow = 'none';
+
+    try {
+        const canvas = await html2canvas(preview, {
+            scale: 2, // Improve resolution
+            useCORS: true,
+            logging: false
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+
+        const imgWidth = pdfWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        // First page
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pdfHeight;
+
+        // Subsequent pages
+        while (heightLeft > 0) {
+            position = heightLeft - imgHeight; // Negative offset to show next part
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pdfHeight;
+        }
+
+        pdf.save("My_ResuTeX_CV.pdf");
+
+    } catch (error) {
+        console.error("PDF generation failed:", error);
+        alert("Failed to generate PDF. Please try again.");
+    } finally {
+        // Restore styling
+        preview.style.boxShadow = originalShadow;
+    }
+}
