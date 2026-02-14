@@ -193,17 +193,7 @@ function restoreFromLocal() {
         } catch (e) { console.error("Could not load save", e); }
     }
 
-    // Restore Privacy Settings
-    // Restore Privacy Settings
-    const privacySettings = JSON.parse(localStorage.getItem('resutex_privacy') || '{}');
-
-    ['name', 'email', 'phone', 'links'].forEach(field => {
-        if (privacySettings[field]) {
-            document.getElementById('preview-page').classList.add(`blur-${field}`);
-            const checkbox = document.getElementById(`blur-${field}-check`);
-            if (checkbox) checkbox.checked = true;
-        }
-    });
+    initPrivacySettings();
 
     // Restore other settings
     if (localStorage.getItem('resutex_dark') === 'true') {
@@ -223,21 +213,53 @@ window.togglePrivacyModal = function () {
 };
 
 window.toggleSpecificBlur = function (field) {
-    const preview = document.getElementById('preview-page');
     const isChecked = document.getElementById(`blur-${field}-check`).checked;
-
-    // Toggle class like 'blur-name', 'blur-email'
-    if (isChecked) {
-        preview.classList.add(`blur-${field}`);
-    } else {
-        preview.classList.remove(`blur-${field}`);
-    }
 
     // Save settings
     const settings = JSON.parse(localStorage.getItem('resutex_privacy') || '{}');
     settings[field] = isChecked;
     localStorage.setItem('resutex_privacy', JSON.stringify(settings));
+
+    // Re-render preview to apply mask (only if master is ON)
+    renderPreview();
 };
+
+function initPrivacySettings() {
+    // 1. Restore Master Switch
+    const masterState = localStorage.getItem('resutex_privacy_master') === 'true';
+    const masterSwitch = document.getElementById('privacy-master-switch');
+    if (masterSwitch) {
+        masterSwitch.checked = masterState;
+        // Update styling instantly
+        if (masterState) {
+            masterSwitch.classList.add('right-0', 'border-indigo-600');
+            masterSwitch.nextElementSibling.classList.add('bg-indigo-600'); // Label
+        }
+    }
+
+    // 2. Restore Checkboxes
+    const privacySettings = JSON.parse(localStorage.getItem('resutex_privacy') || '{}');
+    const isFirstLoad = Object.keys(privacySettings).length === 0;
+
+    ['name', 'email', 'phone', 'links'].forEach(field => {
+        const checkbox = document.getElementById(`blur-${field}-check`);
+        if (!checkbox) return;
+
+        // Visual Sync
+        if (!isFirstLoad) {
+            checkbox.checked = !!privacySettings[field];
+        } else {
+            // Default to checked if first load, so if they turn on Master, everything hides
+            checkbox.checked = true;
+            // Save this default state
+            privacySettings[field] = true;
+        }
+    });
+
+    if (isFirstLoad) {
+        localStorage.setItem('resutex_privacy', JSON.stringify(privacySettings));
+    }
+}
 
 window.scrollToPreview = function () {
     document.getElementById('app-view').scrollIntoView({ behavior: 'smooth' });
@@ -364,19 +386,31 @@ function updateFormInputs() {
     });
 }
 
-// --- RENDER PREVIEW (Updated for Privacy Spans) ---
+// --- RENDER PREVIEW (Updated for Privacy Masking) ---
 function renderPreview() {
     const previewContainer = document.getElementById('preview-page');
     if (!previewContainer) return;
 
-    // Helper to wrap text in privacy spans
-    const wrap = (text, type) => `<span class="sensitive-${type}">${text || ''}</span>`;
+    // Get current privacy settings
+    const privacySettings = JSON.parse(localStorage.getItem('resutex_privacy') || '{}');
+    const masterEnabled = localStorage.getItem('resutex_privacy_master') === 'true';
+
+    // Helper to mask text if privacy is enabled
+    // We use a fixed length of Xs to indicate hidden data without breaking layout too much
+    const mask = (text, field) => {
+        if (!text) return '';
+        // Only mask if Master Switch is ON AND (field is selected OR it's a legacy check)
+        if (masterEnabled && privacySettings[field]) {
+            return 'X'.repeat(10);
+        }
+        return text;
+    };
 
     let html = `
         <div class="text-center border-b pb-4 mb-4">
-            <h1 class="text-3xl font-bold uppercase tracking-wide text-gray-900 mb-1">${wrap(resumeData.name, 'name')}</h1>
+            <h1 class="text-3xl font-bold uppercase tracking-wide text-gray-900 mb-1">${mask(resumeData.name, 'name')}</h1>
             <div class="text-sm text-gray-600">
-                ${wrap(resumeData.email, 'email')} | ${wrap(resumeData.phone, 'phone')} | ${wrap(resumeData.links, 'links')}
+                ${mask(resumeData.email, 'email')} | ${mask(resumeData.phone, 'phone')} | ${mask(resumeData.links, 'links')}
             </div>
         </div>
         
@@ -469,6 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateFormInputs();
                 renderPreview();
                 saveToLocal(); // Sync cloud data to local
+                initPrivacySettings(); // Ensure privacy settings are applied
             }
         } else {
             currentUser = null;

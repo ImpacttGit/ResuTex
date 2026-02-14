@@ -51,24 +51,24 @@
             </div>
             <div class="space-y-3">
                 <label class="flex items-center space-x-2 cursor-pointer">
-                    <input type="checkbox" onchange="toggleSpecificBlur('name')" checked
+                    <input type="checkbox" id="blur-name-check" onchange="toggleSpecificBlur('name')" checked
                         class="form-checkbox text-indigo-600 rounded">
-                    <span>Blur Name</span>
+                    <span>Hide Name</span>
                 </label>
                 <label class="flex items-center space-x-2 cursor-pointer">
-                    <input type="checkbox" onchange="toggleSpecificBlur('email')" checked
+                    <input type="checkbox" id="blur-email-check" onchange="toggleSpecificBlur('email')" checked
                         class="form-checkbox text-indigo-600 rounded">
-                    <span>Blur Email</span>
+                    <span>Hide Email</span>
                 </label>
                 <label class="flex items-center space-x-2 cursor-pointer">
-                    <input type="checkbox" onchange="toggleSpecificBlur('phone')" checked
+                    <input type="checkbox" id="blur-phone-check" onchange="toggleSpecificBlur('phone')" checked
                         class="form-checkbox text-indigo-600 rounded">
-                    <span>Blur Phone Number</span>
+                    <span>Hide Phone Number</span>
                 </label>
                 <label class="flex items-center space-x-2 cursor-pointer">
-                    <input type="checkbox" onchange="toggleSpecificBlur('links')" checked
+                    <input type="checkbox" id="blur-links-check" onchange="toggleSpecificBlur('links')" checked
                         class="form-checkbox text-indigo-600 rounded">
-                    <span>Blur Links</span>
+                    <span>Hide Links</span>
                 </label>
             </div>
             <div class="mt-6 text-right">
@@ -555,17 +555,26 @@
 
                 <!-- Floating Action Buttons -->
                 <div class="absolute top-4 right-8 flex space-x-2 z-10 noprint">
+                    <!-- Master Privacy Toggle -->
+                    <div class="flex items-center bg-white px-3 py-2 rounded shadow space-x-2">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">Hide Sensitive</span>
+                        <div
+                            class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="toggle" id="privacy-master-switch"
+                                onchange="toggleMasterPrivacy()"
+                                class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300" />
+                            <label for="privacy-master-switch"
+                                class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                        </div>
+                    </div>
+
+                    <!-- Cog for Settings -->
                     <button onclick="togglePrivacyModal()"
-                        class="bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50 flex items-center transition"
-                        title="Privacy Settings">
-                        <i class="fa-solid fa-eye-slash mr-1"></i> Privacy
+                        class="bg-white text-gray-500 px-3 py-2 rounded shadow hover:text-gray-700 hover:bg-gray-50 transition"
+                        title="Select fields to hide">
+                        <i class="fa-solid fa-gear"></i>
                     </button>
-                    <!-- "Preview" button: Visible on all devices now per user request -->
-                    <button onclick="scrollToPreview()"
-                        class="bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50 transition"
-                        title="Scroll to Preview / Refresh">
-                        <i class="fa-solid fa-eye mr-1"></i> Preview
-                    </button>
+                    <!-- "Preview" button removed -->
                     <button id="download-pdf-btn" onclick="downloadPDF()"
                         class="bg-indigo-600 text-white px-4 py-2 rounded shadow text-sm font-medium hover:bg-indigo-700 transition">
                         <i class="fa-solid fa-print mr-2"></i> Save as PDF
