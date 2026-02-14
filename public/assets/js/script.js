@@ -366,7 +366,7 @@ function updateFormInputs() {
 
 // --- RENDER PREVIEW (Updated for Privacy Spans) ---
 function renderPreview() {
-    const previewContainer = document.getElementById('preview-content');
+    const previewContainer = document.getElementById('preview-page');
     if (!previewContainer) return;
 
     // Helper to wrap text in privacy spans

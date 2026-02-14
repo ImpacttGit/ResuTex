@@ -27,11 +27,8 @@ body {
     border: 3px solid #f3f3f3;
     border-radius: 50%;
     border-top: 3px solid #4f46e5;
-    /* indigo-600 */
     width: 20px;
     height: 20px;
-    -webkit-animation: spin 1s linear infinite;
-    /* Safari */
     animation: spin 1s linear infinite;
 }
 
@@ -65,20 +62,16 @@ body {
 /* Dark Mode Overrides */
 html.dark body {
     background-color: #111827;
-    /* gray-900 */
     color: #f3f4f6;
-    /* gray-100 */
 }
 
 html.dark .bg-white {
     background-color: #1f2937 !important;
-    /* gray-800 */
     color: #f3f4f6 !important;
 }
 
 html.dark .bg-gray-50 {
     background-color: #374151 !important;
-    /* gray-700 */
     color: #f3f4f6 !important;
 }
 
@@ -91,7 +84,6 @@ html.dark .text-gray-700 {
 html.dark .text-gray-500,
 html.dark .text-gray-600 {
     color: #9ca3af !important;
-    /* gray-400 */
 }
 
 html.dark input,
@@ -111,69 +103,50 @@ html.dark .a4-paper {
     color: #1a202c !important;
 }
 
-/* Print Styles */
+/* Print Styles - ROBUST FIX */
 @media print {
     @page {
         margin: 0;
         size: auto;
     }
 
-    body {
-        background: white;
-        margin: 0;
-        padding: 0;
-        -webkit-print-color-adjust: exact;
+    /* Hide everything first */
+    body * {
+        visibility: hidden;
     }
 
-    /* Hide non-resume elements */
-    nav,
-    aside,
-    #landing-page,
-    .h-16,
-    .w-1/2:first-child,
+    /* Show the resume container and all its children */
+    #preview-page,
+    #preview-page * {
+        visibility: visible;
+    }
+
+    /* Position the resume absolutely to take over the page */
+    #preview-page {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 2.5rem !important;
+        /* Force ~1 inch margin for PDF */
+        background: white;
+        box-shadow: none;
+        border: none;
+        z-index: 9999;
+        transform: none !important;
+        /* Ensure 100% scale */
+    }
+
+    /* Ensure specific UI elements are definitely gone */
     #upgrade-modal,
     #scan-overlay,
     #feedback-btn,
     #mobile-warning,
-    .fa-eye,
-    .fa-download,
-    #job-desc-panel,
-    .absolute.top-4.right-8,
-    #settings-modal,
-    #job-panel-toggle,
-    .noprint {
+    .noprint,
+    nav,
+    aside,
+    .h-16 {
         display: none !important;
-    }
-
-    /* Force preview to full page */
-    #app-view,
-    main,
-    .w-1/2:last-child {
-        display: block !important;
-        width: 100% !important;
-        height: auto !important;
-        background: white !important;
-        padding: 0 !important;
-        overflow: visible !important;
-        margin: 0 !important;
-        position: static !important;
-    }
-
-    .a4-paper {
-        margin: 0 !important;
-        box-shadow: none !important;
-        border: none !important;
-        width: 100% !important;
-        min-height: auto !important;
-        page-break-after: always;
-        transform: scale(1) !important;
-        /* Ensure it is not scaled down */
-        padding: 0 !important;
-        /* Let PDF margin handle it if needed, or keep padding */
-    }
-
-    /* Remove any scrollbars */
-    * {
-        overflow: visible !important;
     }
 }

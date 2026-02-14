@@ -551,28 +551,30 @@
             </div>
 
             <!-- Right: Preview (The "Paper") -->
-            <div class="flex-1 bg-gray-200 overflow-x-auto p-8 flex justify-center">
+            <div class="flex-1 bg-gray-200 overflow-x-auto p-8 flex justify-center relative">
 
                 <!-- Floating Action Buttons -->
-                <div class="absolute top-4 right-8 flex space-x-2 z-10">
+                <div class="absolute top-4 right-8 flex space-x-2 z-10 noprint">
                     <button onclick="togglePrivacyModal()"
-                        class="bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50 flex items-center"
+                        class="bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50 flex items-center transition"
                         title="Privacy Settings">
                         <i class="fa-solid fa-eye-slash mr-1"></i> Privacy
                     </button>
-                    <!-- "Preview" button removed as redundant with auto-update, or keep for mobile scroll -->
+                    <!-- "Preview" button: Visible on all devices now per user request -->
                     <button onclick="scrollToPreview()"
-                        class="md:hidden bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50">
-                        <i class="fa-solid fa-eye"></i>
+                        class="bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50 transition"
+                        title="Scroll to Preview / Refresh">
+                        <i class="fa-solid fa-eye mr-1"></i> Preview
                     </button>
                     <button id="download-pdf-btn" onclick="downloadPDF()"
-                        class="bg-indigo-600 text-white px-4 py-2 rounded shadow text-sm font-medium hover:bg-indigo-700">
+                        class="bg-indigo-600 text-white px-4 py-2 rounded shadow text-sm font-medium hover:bg-indigo-700 transition">
                         <i class="fa-solid fa-print mr-2"></i> Save as PDF
                     </button>
                 </div>
 
                 <!-- The Actual Resume Page -->
-                <div id="preview-page" class="a4-paper">
+                <div id="preview-page"
+                    class="a4-paper transform origin-top scale-90 md:scale-100 transition-transform duration-300">
                     <!-- Dynamic Content Loaded Here -->
                 </div>
             </div>
