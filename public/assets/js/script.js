@@ -207,6 +207,12 @@ function restoreFromLocal() {
 }
 
 // --- PRIVACY & UI LOGIC ---
+window.toggleMasterPrivacy = function () {
+    const isChecked = document.getElementById('privacy-master-switch').checked;
+    localStorage.setItem('resutex_privacy_master', isChecked);
+    renderPreview();
+};
+
 window.togglePrivacyModal = function () {
     const modal = document.getElementById('privacy-settings-modal');
     modal.classList.toggle('hidden');
@@ -397,14 +403,28 @@ function renderPreview() {
 
     // Helper to mask text if privacy is enabled
     // We use a fixed length of Xs to indicate hidden data without breaking layout too much
+    // Helper to sanitize input (XSS Prevention)
+    const sanitize = (str) => {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    };
+
+    // Helper to mask text if privacy is enabled
+    // We use a fixed length of Xs to indicate hidden data without breaking layout too much
     const mask = (text, field) => {
         if (!text) return '';
         // Only mask if Master Switch is ON AND (field is selected OR it's a legacy check)
         if (masterEnabled && privacySettings[field]) {
             return 'X'.repeat(10);
         }
-        return text;
+        return sanitize(text); // Always sanitize visible text
     };
+
+    // Sanitize non-masked fields too
+    const safeSummary = sanitize(resumeData.summary);
+    const safeSkills = sanitize(resumeData.skills);
 
     let html = `
         <div class="text-center border-b pb-4 mb-4">
@@ -415,7 +435,7 @@ function renderPreview() {
         </div>
         
         <div class="mb-4">
-            <p class="text-sm text-gray-700 leading-relaxed">${resumeData.summary}</p>
+            <p class="text-sm text-gray-700 leading-relaxed">${safeSummary}</p>
         </div>
 
         <div class="mb-4">
@@ -427,12 +447,12 @@ function renderPreview() {
         html += `
             <div>
                 <div class="flex justify-between items-baseline mb-1">
-                    <h3 class="font-bold text-gray-800 text-sm">${exp.role}</h3>
-                    <span class="text-xs text-gray-500 font-medium">${exp.dates}</span>
+                    <h3 class="font-bold text-gray-800 text-sm">${sanitize(exp.role)}</h3>
+                    <span class="text-xs text-gray-500 font-medium">${sanitize(exp.dates)}</span>
                 </div>
-                <div class="text-sm text-gray-700 italic mb-1">${exp.company}</div>
+                <div class="text-sm text-gray-700 italic mb-1">${sanitize(exp.company)}</div>
                 <ul class="list-disc list-inside text-xs text-gray-600 space-y-0.5 ml-1">
-                    ${exp.details.split('\n').map(d => `<li>${d.replace(/^•\s*/, '')}</li>`).join('')}
+                    ${sanitize(exp.details).split('\n').map(d => `<li>${d.replace(/^•\s*/, '')}</li>`).join('')}
                 </ul>
             </div>
         `;
@@ -450,11 +470,11 @@ function renderPreview() {
         html += `
             <div class="mb-2">
                 <div class="flex justify-between items-baseline">
-                    <h3 class="font-bold text-gray-800 text-sm">${edu.school}</h3>
-                    <span class="text-xs text-gray-500">${edu.dates}</span>
+                    <h3 class="font-bold text-gray-800 text-sm">${sanitize(edu.school)}</h3>
+                    <span class="text-xs text-gray-500">${sanitize(edu.dates)}</span>
                 </div>
-                <div class="text-xs text-gray-700">${edu.degree}</div>
-                <div class="text-xs text-gray-500 italic">${edu.details}</div>
+                <div class="text-xs text-gray-700">${sanitize(edu.degree)}</div>
+                <div class="text-xs text-gray-500 italic">${sanitize(edu.details)}</div>
             </div>
         `;
     });
@@ -464,7 +484,7 @@ function renderPreview() {
 
         <div>
             <h2 class="text-lg font-bold text-gray-800 border-b-2 border-gray-300 mb-2 uppercase tracking-wider">Skills</h2>
-            <p class="text-xs text-gray-700 leading-relaxed">${resumeData.skills}</p>
+            <p class="text-xs text-gray-700 leading-relaxed">${safeSkills}</p>
         </div>
     `;
 
