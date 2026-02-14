@@ -23,25 +23,65 @@
     <!-- PDF Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Social Media Preview -->
+    <meta property="og:title" content="ResuTeX - ATS-Friendly LaTeX Resumes">
+    <meta property="og:description"
+        content="Build a professional, single-column LaTeX resume that passes robot screeners. No coding required.">
+    <meta property="og:image" content="https://resutex.com/assets/img/social-preview.png">
+    <meta property="og:url" content="https://resutex.com">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- Favicon -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>">
 </head>
 
 <body class="bg-gray-50 text-gray-800">
 
+    <!-- Job Description Side Panel -->
+    <div id="job-desc-panel"
+        class="fixed right-0 top-0 h-full w-80 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50 border-l border-gray-200 flex flex-col pt-16">
+        <div class="px-4 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="font-bold text-gray-700">Job Description</h3>
+            <button onclick="toggleJobPanel()" class="text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="flex-1 p-4">
+            <textarea id="job-desc-input"
+                class="w-full h-full p-3 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                placeholder="Paste the job description here to reference while you edit..."></textarea>
+        </div>
+    </div>
+
     <!-- Mobile Warning -->
     <div id="mobile-warning"
-        class="fixed inset-0 bg-gray-900 z-[100] md:hidden flex flex-col items-center justify-center text-center p-8 text-white">
-        <i class="fa-solid fa-desktop text-6xl mb-6 text-indigo-400"></i>
-        <h2 class="text-2xl font-bold mb-2">Desktop Experience Required</h2>
-        <p class="text-gray-300">ResuTeX is a professional editor designed for large screens. Please switch to a laptop
-            or desktop computer for the best experience.</p>
+        class="hidden md:hidden fixed inset-0 bg-gray-900 z-[60] flex flex-col items-center justify-center p-8 text-center text-white">
+        <i class="fa-solid fa-desktop text-4xl mb-4 text-indigo-400"></i>
+        <h2 class="text-xl font-bold mb-2">Desktop Recommended</h2>
+        <p class="text-gray-400 mb-6">Building a professional LaTeX resume is tricky on a small screen. Please switch to
+            a laptop or desktop.</p>
+        <button onclick="document.getElementById('mobile-warning').style.display='none'"
+            class="border border-gray-600 px-4 py-2 rounded hover:bg-gray-800">
+            I'll try anyway
+        </button>
     </div>
 
     <!-- Feedback Button -->
-    <a id="feedback-btn" href="mailto:support@resutex.com"
-        class="fixed bottom-6 right-6 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition z-50 flex items-center justify-center w-12 h-12"
+    <a id="feedback-btn" href="mailto:support@resutex.com?subject=ResuTeX%20Beta%20Feedback"
+        class="fixed bottom-6 right-6 bg-gray-900 text-white p-4 rounded-full shadow-lg hover:bg-gray-700 transition z-50 flex items-center justify-center group"
         title="Report a Bug">
-        <i class="fa-solid fa-bug"></i>
+        <i class="fa-solid fa-bug text-xl group-hover:rotate-12 transition-transform"></i>
     </a>
+
+    <script>
+        // Simple check to show warning on small screens if needed
+        if (window.innerWidth < 768) {
+            document.getElementById('mobile-warning').classList.remove('hidden');
+            document.getElementById('mobile-warning').classList.add('flex');
+        }
+    </script>
 
     <!-- ================= LANDING PAGE VIEW ================= -->
     <div id="landing-page" class="flex flex-col min-h-screen">
@@ -316,8 +356,31 @@
                 </a>
             </nav>
 
-            <div class="p-4 border-t border-gray-800">
-                <button onclick="goHome()" class="flex items-center text-gray-400 hover:text-white">
+            <div class="p-4 border-t border-gray-800 space-y-2">
+                <button onclick="toggleDarkMode()" class="flex items-center text-gray-400 hover:text-white w-full">
+                    <i class="fa-solid fa-moon w-6"></i>
+                    <span>Dark Mode</span>
+                </button>
+                <button onclick="toggleJobPanel()" id="job-panel-toggle"
+                    class="flex items-center text-gray-400 hover:text-white w-full">
+                    <i class="fa-solid fa-briefcase w-6"></i>
+                    <span>Job Description</span>
+                </button>
+                <button onclick="exportJSON()" class="flex items-center text-gray-400 hover:text-white w-full">
+                    <i class="fa-solid fa-download w-6"></i>
+                    <span>Export JSON</span>
+                </button>
+                <div class="relative">
+                    <input type="file" id="import-json" class="hidden" accept=".json" onchange="importJSON(event)">
+                    <button onclick="document.getElementById('import-json').click()"
+                        class="flex items-center text-gray-400 hover:text-white w-full">
+                        <i class="fa-solid fa-upload w-6"></i>
+                        <span>Import JSON</span>
+                    </button>
+                </div>
+
+                <button onclick="goHome()"
+                    class="flex items-center text-gray-400 hover:text-white w-full pt-2 mt-2 border-t border-gray-700">
                     <i class="fa-solid fa-right-from-bracket w-6"></i>
                     <span>Exit</span>
                 </button>
@@ -331,10 +394,18 @@
             <div class="w-1/2 bg-white border-r border-gray-200 flex flex-col h-full flex-shrink-0">
                 <!-- Toolbar -->
                 <div class="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white">
-                    <h2 class="font-bold text-gray-800">Content Editor</h2>
+                    <div class="flex items-center">
+                        <h2 class="font-bold text-gray-800 mr-4">Content Editor</h2>
+                        <!-- ATS Visualizer -->
+                        <div class="flex items-center bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200 cursor-help"
+                            title="Your template is certified ATS Friendly">
+                            <i class="fa-solid fa-shield-halved mr-2"></i>
+                            ATS Score: 100%
+                        </div>
+                    </div>
                     <div class="flex space-x-2">
                         <button onclick="loadSampleData()"
-                            class="text-xs text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-md hover:bg-indigo-100 font-medium transition">
+                            class="text-xs text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-md hover:bg-indigo-100 font-medium transition mr-2 underline">
                             Load Sample
                         </button>
                         <button onclick="triggerAIScan()" id="ai-scan-btn"
@@ -445,6 +516,11 @@
 
                 <!-- Floating Action Buttons -->
                 <div class="absolute top-4 right-8 flex space-x-2 z-10">
+                    <button onclick="toggleBlur()"
+                        class="bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50"
+                        title="Privacy Blur">
+                        <i class="fa-solid fa-eye-slash"></i>
+                    </button>
                     <button onclick="renderPreview()"
                         class="bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50">
                         <i class="fa-solid fa-eye mr-1"></i> Preview

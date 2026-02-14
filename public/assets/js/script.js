@@ -208,22 +208,26 @@ window.downloadPDF = async function () {
 };
 
 // --- SAMPLE DATA & AUTOSAVE ---
-window.loadSampleData = async function () {
-    if (!confirm("This will overwrite your current data. Continue?")) return;
-
-    try {
-        const response = await fetch('templates/deedy_resume.json'); // Adjusted path relative to index.html location
-        if (!response.ok) throw new Error("Failed to load sample data");
-        const data = await response.json();
-
-        resumeData = { ...resumeData, ...data };
+window.loadSampleData = function () {
+    if (confirm("This will overwrite your current fields. Continue?")) {
+        // Mock data matching the Deedy structure
+        resumeData = {
+            name: "Jane Doe",
+            phone: "+1 555 0199",
+            email: "jane@example.com",
+            links: "linkedin.com/in/jane | github.com/jane",
+            summary: "Experienced software engineer with a focus on scalable systems.",
+            experience: [
+                { role: "Senior Engineer", company: "Tech Corp", dates: "2020-Present", details: "• Led team of 5 engineers.\n• Improved uptime by 99%." }
+            ],
+            education: [
+                { school: "University of Tech", degree: "BS Computer Science", dates: "2016-2020", details: "GPA 3.9" }
+            ],
+            skills: "Java, Python, C++, React, AWS"
+        };
         updateFormInputs();
         renderPreview();
-        saveToLocal(); // Auto-save the sample data
-        alert("Sample data loaded!");
-    } catch (e) {
-        console.error(e);
-        alert("Error loading sample data.");
+        saveToLocal(); // Auto-save sample data
     }
 };
 
@@ -235,15 +239,85 @@ function restoreFromLocal() {
     const saved = localStorage.getItem('resutex_data');
     if (saved) {
         try {
-            resumeData = { ...resumeData, ...JSON.parse(saved) };
+            resumeData = Object.assign({}, resumeData, JSON.parse(saved)); // Merge to keep defaults if missing keys
             updateFormInputs();
             renderPreview();
-            console.log("Restored from Local Storage");
-        } catch (e) {
-            console.error("Error parsing local storage", e);
-        }
+        } catch (e) { console.error("Could not load save", e); }
+    }
+
+    // Restore other settings
+    if (localStorage.getItem('resutex_dark') === 'true') {
+        document.documentElement.classList.add('dark');
+    }
+
+    const savedJobDesc = localStorage.getItem('resutex_job_desc');
+    if (savedJobDesc && document.getElementById('job-desc-input')) {
+        document.getElementById('job-desc-input').value = savedJobDesc;
     }
 }
+
+// --- FEATURE TOGGLES ---
+window.toggleBlur = function () {
+    const page = document.getElementById('preview-page');
+    if (page) page.classList.toggle('privacy-blur');
+
+    const icon = event.currentTarget.querySelector('i');
+    if (icon) {
+        icon.classList.toggle('fa-eye-slash');
+        icon.classList.toggle('fa-eye');
+    }
+};
+
+window.toggleDarkMode = function () {
+    document.documentElement.classList.toggle('dark');
+    localStorage.setItem('resutex_dark', document.documentElement.classList.contains('dark'));
+};
+
+window.toggleJobPanel = function () {
+    const panel = document.getElementById('job-desc-panel');
+    if (panel) {
+        if (panel.classList.contains('translate-x-full')) {
+            panel.classList.remove('translate-x-full');
+        } else {
+            panel.classList.add('translate-x-full');
+        }
+    }
+};
+
+// --- DATA PORTABILITY ---
+window.exportJSON = function () {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(resumeData, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "my_resume.json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+};
+
+window.importJSON = function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        try {
+            const imported = JSON.parse(e.target.result);
+            if (confirm("Replace current resume with imported data?")) {
+                resumeData = imported;
+                updateFormInputs();
+                renderPreview();
+                saveToLocal();
+                alert("Import successful!");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Invalid JSON file.");
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = ''; // Reset input
+};
 
 window.loadTemplate = async function (templateName) {
     try {
@@ -361,6 +435,14 @@ document.addEventListener('DOMContentLoaded', () => {
             restoreFromLocal();
         }
     });
+
+    // Job Description Persistence
+    const jobInput = document.getElementById('job-desc-input');
+    if (jobInput) {
+        jobInput.addEventListener('input', (e) => {
+            localStorage.setItem('resutex_job_desc', e.target.value);
+        });
+    }
 
     // Inputs with Autosave
     ['name', 'phone', 'email', 'links', 'summary', 'skills'].forEach(f => {
