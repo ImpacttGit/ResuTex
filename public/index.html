@@ -20,9 +20,8 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/styles.css">
 
-    <!-- PDF Generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- LaTeX.js — Client-side LaTeX to HTML5 compiler -->
+    <script src="https://cdn.jsdelivr.net/npm/latex.js/dist/latex.js"></script>
 
     <!-- Social Media Preview -->
     <meta property="og:title" content="ResuTeX - ATS-Friendly LaTeX Resumes">
@@ -377,7 +376,23 @@
                 </div>
             </div>
 
-            <nav class="flex-1 overflow-y-auto py-4">
+            <!-- Resumes List -->
+            <div class="px-4 pb-2">
+                <div class="flex justify-between items-center mb-2 px-2">
+                    <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">My Resumes</h3>
+                    <button onclick="createNewResumeUI()"
+                        class="text-indigo-400 hover:text-white text-xs p-1 rounded hover:bg-gray-800 transition"
+                        title="Create New Resume">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+                <div id="resume-sidebar-list" class="space-y-1 max-h-40 overflow-y-auto custom-scroll pr-1">
+                    <!-- Rendered via JS -->
+                    <div class="text-xs text-gray-500 italic px-2">Loading...</div>
+                </div>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto py-2">
                 <a href="#" id="editor-link" onclick="showEditorView()"
                     class="flex items-center px-6 py-3 bg-gray-800 border-r-4 border-indigo-500">
                     <i class="fa-solid fa-pen-to-square w-6"></i>
@@ -404,6 +419,10 @@
                     class="flex items-center text-gray-400 hover:text-white w-full">
                     <i class="fa-solid fa-briefcase w-6"></i>
                     <span>Job Description</span>
+                </button>
+                <button onclick="exportToTeX()" class="flex items-center text-gray-400 hover:text-white w-full">
+                    <i class="fa-solid fa-file-code w-6"></i>
+                    <span class="text-sm">Export to LaTeX (.tex)</span>
                 </button>
                 <button onclick="exportJSON()" class="flex items-center text-gray-400 hover:text-white w-full">
                     <i class="fa-solid fa-download w-6"></i>

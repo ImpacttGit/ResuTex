@@ -61,23 +61,50 @@
         </div>
     </div>
     <script type="module">
-        import { loginUser, resetUserPassword } from './assets/js/firebase-app.js';
+        import { loginUser, resetUserPassword } from './assets/js/firebase-app.js?v=2';
 
         // Forgot Password Logic
-        document.getElementById('forgot-password').addEventListener('click', async () => {
-            const email = document.getElementById('email').value;
+        // Forgot Password Logic
+        document.getElementById('forgot-password').addEventListener('click', async (e) => {
+            const btn = e.target;
+            const emailInput = document.getElementById('email');
+            const email = emailInput.value;
+
             if (!email) {
                 alert("Please enter your email address in the field above first.");
-                document.getElementById('email').focus();
+                emailInput.focus();
+                emailInput.classList.add('ring-2', 'ring-red-500');
+                setTimeout(() => emailInput.classList.remove('ring-2', 'ring-red-500'), 2000);
                 return;
             }
+
             if (confirm(`Send password reset email to ${email}?`)) {
                 try {
+                    const originalText = btn.textContent;
+                    btn.textContent = "Sending...";
+                    btn.disabled = true;
+
                     await resetUserPassword(email);
-                    alert(`Password reset email sent to ${email}. Check your inbox!`);
+
+                    btn.textContent = "Reset Email Sent!";
+                    btn.classList.remove('text-indigo-600', 'hover:text-indigo-500');
+                    btn.classList.add('text-green-600', 'font-bold');
+
+                    alert(`Password reset link sent to ${email}. Please check your inbox (and spam folder).`);
+
+                    // Reset button state after a few seconds
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.disabled = false;
+                        btn.classList.add('text-indigo-600', 'hover:text-indigo-500');
+                        btn.classList.remove('text-green-600', 'font-bold');
+                    }, 5000);
+
                 } catch (error) {
                     console.error(error);
                     alert("Error: " + error.message);
+                    btn.textContent = "Error. Try Again.";
+                    btn.disabled = false;
                 }
             }
         });
@@ -90,9 +117,12 @@
             try {
                 btn.textContent = "Signing In...";
                 btn.disabled = true;
+                console.log("Attempting login for:", email);
                 await loginUser(email, password);
+                console.log("Login successful");
                 window.location.href = 'index.html#app';
             } catch (error) {
+                console.error("Login Error:", error);
                 alert("Login Failed: " + error.message);
                 btn.textContent = "Sign in";
                 btn.disabled = false;

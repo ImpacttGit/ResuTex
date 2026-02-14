@@ -1,5 +1,7 @@
-import { monitorAuthState, saveResume, getResume, logoutUser, updateUserProfile, resetUserPassword } from './firebase-app.js';
+import { monitorAuthState, saveResume, getResume, createResume, getUserResumes, deleteResume, logoutUser, updateUserProfile, resetUserPassword } from './firebase-app.js?v=2';
 let currentUser = null;
+let currentResumeId = null;
+let allResumes = [];
 let resumeData = {
     name: "John Doe",
     phone: "+1 (555) 010-9999",
@@ -142,6 +144,191 @@ window.loadPhotoPreview = function (event) {
     }
 };
 
+// --- RESUME MANAGEMENT ---
+window.loadResumes = async function () {
+    if (!currentUser) return;
+    try {
+        const sidebarList = document.getElementById('resume-sidebar-list');
+        if (sidebarList) sidebarList.innerHTML = '<div class="text-xs text-gray-500 italic px-2">Loading...</div>';
+
+        let resumes = [];
+        try {
+            resumes = await getUserResumes(currentUser.uid);
+        } catch (queryErr) {
+            console.warn("Could not query resumes (new user?), creating default.", queryErr);
+            resumes = [];
+        }
+        allResumes = resumes;
+
+        // If no resumes, create a default one
+        if (allResumes.length === 0) {
+            // Check for legacy data to migrate or just start fresh
+            try {
+                const legacyDoc = await getResume(currentUser.uid, "currentDraft");
+                if (legacyDoc.exists()) {
+                    const legacyData = legacyDoc.data();
+                    const newId = await createResume(currentUser.uid, { ...legacyData, title: legacyData.name || "My Resume" });
+                    currentResumeId = newId;
+                    resumeData = legacyData;
+                    allResumes = [{ id: newId, ...legacyData }];
+                } else {
+                    throw new Error("no legacy");
+                }
+            } catch (_) {
+                // Create brand new
+                const defaultData = { ...resumeData, title: "My First Resume" };
+                const newId = await createResume(currentUser.uid, defaultData);
+                currentResumeId = newId;
+                resumeData = defaultData;
+                allResumes = [{ id: newId, ...defaultData }];
+            }
+        } else {
+            // Select most recently updated or first
+            if (!currentResumeId) {
+                currentResumeId = allResumes[0].id;
+                resumeData = allResumes[0];
+            }
+        }
+
+        renderResumeList();
+        updateFormInputs();
+        renderPreview();
+        saveToLocal();
+
+    } catch (e) {
+        console.error("Error loading resumes:", e);
+        // Don't alert — just use local data fallback
+        restoreFromLocal();
+    }
+};
+
+window.renderResumeList = function () {
+    const list = document.getElementById('resume-sidebar-list');
+    if (!list) return;
+
+    if (allResumes.length === 0) {
+        list.innerHTML = '<div class="text-xs text-gray-500 italic px-2">No resumes found.</div>';
+        return;
+    }
+
+    list.innerHTML = allResumes.map(res => `
+        <div class="flex items-center justify-between group p-2 rounded cursor-pointer ${res.id === currentResumeId ? 'bg-indigo-900 text-white' : 'hover:bg-gray-800 text-gray-300'}" onclick="switchResume('${res.id}')">
+            <div class="truncate text-xs font-medium flex-1">
+                ${res.title || res.name || "Untitled Resume"}
+            </div>
+            ${allResumes.length > 1 ? `
+            <button onclick="deleteResumeUI(event, '${res.id}')" class="text-gray-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition px-1" title="Delete">
+                <i class="fa-solid fa-trash-can text-[10px]"></i>
+            </button>
+            ` : ''}
+        </div>
+    `).join('');
+};
+
+window.switchResume = async function (id) {
+    if (id === currentResumeId) return;
+
+    // Auto-save current before switching? 
+    // We autosave on input, so it should be fine, but good to ensure.
+    if (currentUser) await saveResume(currentUser.uid, resumeData, currentResumeId);
+
+    const target = allResumes.find(r => r.id === id);
+    if (target) {
+        currentResumeId = id;
+        // Fetch fresh data to be safe, or use cached from list if we trust it
+        // Better to fetch to get full details if list only had summary
+        const freshDoc = await getResume(currentUser.uid, id);
+        if (freshDoc.exists()) {
+            resumeData = freshDoc.data();
+        } else {
+            resumeData = target;
+        }
+
+        renderResumeList();
+        updateFormInputs();
+        renderPreview();
+        saveToLocal();
+    }
+};
+
+window.createNewResumeUI = async function () {
+    if (!currentUser) return alert("Please sign in to create resumes.");
+
+    const name = prompt("Enter a name for your new resume:", "My New Resume");
+    if (!name) return;
+
+    try {
+        // Start with a clean slate or copy current? Let's start with clean/default structure but keep user contact info
+        const baseData = {
+            name: name,
+            email: currentUser.email || "",
+            phone: "",
+            links: "",
+            summary: "",
+            experience: [],
+            education: [],
+            skills: ""
+        };
+
+        // Or copy current contact info if available
+        if (resumeData) {
+            baseData.name = name; // Resume Name, not User Name. Wait, the form has a Name field too.
+            // Let's disambiguate Resume Name vs Person Name. 
+            // The resumeData.name is usually the Person's Name. 
+            // We need a metadata field for the Resume Title.
+            // For now, let's assume the user wants to duplicate their contact info at least.
+            baseData.name = resumeData.name;
+            baseData.email = resumeData.email;
+            baseData.phone = resumeData.phone;
+            baseData.links = resumeData.links;
+        }
+
+        // Properly we should have a separate 'title' field for the resume document, but let's use the doc name for now or add a custom field.
+        // Let's add 'title' to the object.
+        baseData.title = name; // Internal title
+
+        const newId = await createResume(currentUser.uid, baseData);
+        allResumes.unshift({ id: newId, ...baseData });
+        currentResumeId = newId;
+        resumeData = baseData;
+
+        renderResumeList();
+        updateFormInputs();
+        renderPreview();
+        saveToLocal();
+
+    } catch (e) {
+        console.error(e);
+        alert("Error creating resume.");
+    }
+};
+
+window.deleteResumeUI = async function (e, id) {
+    e.stopPropagation(); // Prevent switching
+    if (!confirm("Are you sure you want to delete this resume? This cannot be undone.")) return;
+
+    try {
+        await deleteResume(currentUser.uid, id);
+        allResumes = allResumes.filter(r => r.id !== id);
+
+        // If we deleted the current one, switch to another
+        if (id === currentResumeId) {
+            if (allResumes.length > 0) {
+                await switchResume(allResumes[0].id);
+            } else {
+                // Should force create a new one or show empty state
+                // For simplicity, create a default
+                window.location.reload();
+            }
+        } else {
+            renderResumeList();
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Failed to delete resume.");
+    }
+};
+
 // ... (Keep existing functions: showEditorView, showTemplatesView, etc.) ...
 window.showEditorView = () => {
     document.getElementById('templates-view').classList.add('hidden');
@@ -187,7 +374,7 @@ window.addExperience = () => {
     renderExperienceFields();
     renderPreview();
     saveToLocal();
-    if (currentUser) saveResume(currentUser.uid, resumeData);
+    if (currentUser) saveResume(currentUser.uid, resumeData, currentResumeId);
 };
 
 window.removeExperience = (index) => {
@@ -195,7 +382,7 @@ window.removeExperience = (index) => {
     renderExperienceFields();
     renderPreview();
     saveToLocal();
-    if (currentUser) saveResume(currentUser.uid, resumeData);
+    if (currentUser) saveResume(currentUser.uid, resumeData, currentResumeId);
 };
 
 window.addEducation = () => {
@@ -203,7 +390,7 @@ window.addEducation = () => {
     renderEducationFields();
     renderPreview();
     saveToLocal();
-    if (currentUser) saveResume(currentUser.uid, resumeData);
+    if (currentUser) saveResume(currentUser.uid, resumeData, currentResumeId);
 };
 
 window.removeEducation = (index) => {
@@ -211,7 +398,7 @@ window.removeEducation = (index) => {
     renderEducationFields();
     renderPreview();
     saveToLocal();
-    if (currentUser) saveResume(currentUser.uid, resumeData);
+    if (currentUser) saveResume(currentUser.uid, resumeData, currentResumeId);
 };
 
 function renderExperienceFields() {
@@ -259,14 +446,14 @@ window.updateExp = (index, field, value) => {
     renderPreview();
     saveToLocal();
     // Debounce cloud save if needed, but for now:
-    if (currentUser) saveResume(currentUser.uid, resumeData);
+    if (currentUser) saveResume(currentUser.uid, resumeData, currentResumeId);
 };
 
 window.updateEdu = (index, field, value) => {
     resumeData.education[index][field] = value;
     renderPreview();
     saveToLocal();
-    if (currentUser) saveResume(currentUser.uid, resumeData);
+    if (currentUser) saveResume(currentUser.uid, resumeData, currentResumeId);
 };
 window.downloadPDF = function () {
     // Alert user about best practice
@@ -442,6 +629,94 @@ window.importJSON = function (event) {
     event.target.value = ''; // Reset input
 };
 
+// --- LaTeX SOURCE GENERATION ---
+function generateLaTeXSource(applyMask) {
+    const privacySettings = JSON.parse(localStorage.getItem('resutex_privacy') || '{}');
+    const masterEnabled = localStorage.getItem('resutex_privacy_master') === 'true';
+    // Escape special LaTeX characters
+    const esc = (str) => {
+        if (!str) return '';
+        // Order matters! Escape backslash first.
+        return str
+            .replace(/\\/g, '\\textbackslash ')
+            .replace(/&/g, '\\&')
+            .replace(/%/g, '\\%')
+            .replace(/\$/g, '\\$')
+            .replace(/#/g, '\\#')
+            .replace(/_/g, '\\_')
+            .replace(/\{/g, '\\{')
+            .replace(/\}/g, '\\}')
+            .replace(/~/g, '\\textasciitilde ')
+            .replace(/\^/g, '\\textasciicircum ');
+    };
+    const mask = (text, field) => {
+        if (!text) return '';
+        if (applyMask && masterEnabled && privacySettings[field]) {
+            if (field === 'name') return text.replace(/[a-zA-Z]/g, 'X');
+            if (field === 'email') return 'xxx@example.com';
+            if (field === 'phone') return 'XXX-XXX-XXXX';
+            if (field === 'links') return 'xxxxxxx.com';
+            return 'XXXXXXXXXX';
+        }
+        return esc(text);
+    };
+    const r = resumeData;
+    const contactParts = [mask(r.email, 'email'), mask(r.phone, 'phone'), mask(r.links, 'links')].filter(Boolean);
+    const contactLine = contactParts.join(' | ');
+    let tex = '\\documentclass{article}\n\\begin{document}\n\n';
+    tex += '\\begin{center}\n';
+    tex += '{\\LARGE \\textbf{' + mask(r.name, 'name') + '}}\\\\[0.3em]\n';
+    tex += contactLine + '\n';
+    tex += '\\end{center}\n\n';
+    if (r.summary) {
+        tex += '\\section*{Summary}\n' + esc(r.summary) + '\n\n';
+    }
+    if (r.experience && r.experience.length > 0) {
+        tex += '\\section*{Experience}\n';
+        r.experience.forEach(exp => {
+            tex += '\\textbf{' + esc(exp.role) + '} --- ' + esc(exp.company) + ' \\hfill ' + esc(exp.dates) + '\n\n';
+            if (exp.details) {
+                const bullets = exp.details.split('\n').filter(d => d.trim());
+                if (bullets.length > 0) {
+                    tex += '\\begin{itemize}\n';
+                    bullets.forEach(b => {
+                        const clean = b.replace(/^[\u2022\-\*]\s*/, '');
+                        tex += '\\item ' + esc(clean) + '\n';
+                    });
+                    tex += '\\end{itemize}\n';
+                }
+            }
+        });
+    }
+    if (r.education && r.education.length > 0) {
+        tex += '\\section*{Education}\n';
+        r.education.forEach(edu => {
+            tex += '\\textbf{' + esc(edu.school) + '} \\hfill ' + esc(edu.dates) + '\n\n';
+            tex += '\\textit{' + esc(edu.degree) + '}';
+            if (edu.details) tex += '\n\n' + esc(edu.details);
+            tex += '\n\n';
+        });
+    }
+    if (r.skills) {
+        tex += '\\section*{Skills}\n' + esc(r.skills) + '\n';
+    }
+    tex += '\n\\end{document}\n';
+    return tex;
+}
+
+window.exportToTeX = function () {
+    const tex = generateLaTeXSource(false);
+    const blob = new Blob([tex], { type: 'text/x-tex' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (resumeData.name || 'resume').replace(/\s+/g, '_') + '.tex';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+};
+
 window.loadTemplate = async function (templateName) {
     try {
         const response = await fetch(`../../templates/${templateName}.json`);
@@ -457,7 +732,7 @@ window.loadTemplate = async function (templateName) {
 
         // Save to Firestore if user is logged in
         if (currentUser) {
-            await saveResume(currentUser.uid, resumeData);
+            await saveResume(currentUser.uid, resumeData, currentResumeId);
         }
 
         updateFormInputs(); // Update form fields
@@ -514,18 +789,47 @@ function updateFormInputs() {
     renderEducationFields();
 }
 
-// --- RENDER PREVIEW (Updated for Privacy Masking) ---
+// --- RENDER PREVIEW (Real LaTeX via LaTeX.js with HTML fallback) ---
+let _renderTimer = null;
 function renderPreview() {
+    clearTimeout(_renderTimer);
+    _renderTimer = setTimeout(_doRender, 150);
+}
+
+function _doRender() {
     const previewContainer = document.getElementById('preview-page');
     if (!previewContainer) return;
 
-    // Get current privacy settings
+    // Try LaTeX.js rendering first
+    if (typeof latexjs !== 'undefined') {
+        try {
+            const texSource = generateLaTeXSource(true);
+            const generator = new latexjs.HtmlGenerator({ hyphenate: false });
+            const parsed = latexjs.parse(texSource, { generator: generator });
+
+            // Inject LaTeX.js stylesheets (only once)
+            if (!window._latexStylesLoaded) {
+                const styles = parsed.stylesAndScripts("https://cdn.jsdelivr.net/npm/latex.js/dist/");
+                document.head.appendChild(styles);
+                window._latexStylesLoaded = true;
+            }
+
+            previewContainer.innerHTML = '';
+            previewContainer.appendChild(parsed.domFragment());
+            return;
+        } catch (latexErr) {
+            console.warn("LaTeX.js parse error, falling back to HTML preview:", latexErr.message);
+        }
+    }
+
+    // --- FALLBACK: HTML Preview ---
+    _renderHTMLFallback(previewContainer);
+}
+
+function _renderHTMLFallback(previewContainer) {
     const privacySettings = JSON.parse(localStorage.getItem('resutex_privacy') || '{}');
     const masterEnabled = localStorage.getItem('resutex_privacy_master') === 'true';
 
-    // Helper to mask text if privacy is enabled
-    // We use a fixed length of Xs to indicate hidden data without breaking layout too much
-    // Helper to sanitize input (XSS Prevention)
     const sanitize = (str) => {
         if (!str) return '';
         const div = document.createElement('div');
@@ -533,51 +837,17 @@ function renderPreview() {
         return div.innerHTML;
     };
 
-    // Helper to mask text if privacy is enabled
-    // We use smart masking based on the field type
     const mask = (text, field) => {
         if (!text) return '';
-
-        // Only mask if Master Switch is ON AND (field is selected OR it's a legacy check)
         if (masterEnabled && privacySettings[field]) {
-            if (field === 'name') {
-                // Replace letters with X, keep spaces
-                return text.replace(/[a-zA-Z]/g, 'X');
-            }
-            if (field === 'email') {
-                // Standard placeholder
-                return 'xxx@example.com';
-            }
-            if (field === 'phone') {
-                // Keep the first few chars (country code/area code approx) then mask
-                // Try to keep formatting if possible
-                if (text.length > 5) {
-                    return text.substring(0, 5) + ' ' + 'X'.repeat(text.length - 5);
-                }
-                return 'XXX-XXX-XXXX';
-            }
-            if (field === 'links') {
-                // Try to keep the domain, mask the path
-                // e.g. "linkedin.com/in/johndoe" -> "linkedin.com/xxxxxxx"
-                // Handle multiple links separated by |
-                return text.split('|').map(link => {
-                    link = link.trim();
-                    const parts = link.split('/');
-                    if (parts.length > 1) {
-                        return parts[0] + '/xxxxxxx';
-                    }
-                    return 'xxxxxxx.com';
-                }).join(' | ');
-            }
-            // Fallback
+            if (field === 'name') return text.replace(/[a-zA-Z]/g, 'X');
+            if (field === 'email') return 'xxx@example.com';
+            if (field === 'phone') return 'XXX-XXX-XXXX';
+            if (field === 'links') return 'xxxxxxx.com';
             return 'X'.repeat(10);
         }
-        return sanitize(text); // Always sanitize visible text
+        return sanitize(text);
     };
-
-    // Sanitize non-masked fields too
-    const safeSummary = sanitize(resumeData.summary);
-    const safeSkills = sanitize(resumeData.skills);
 
     let html = `
         <div class="text-center border-b pb-4 mb-4">
@@ -586,68 +856,50 @@ function renderPreview() {
                 ${mask(resumeData.email, 'email')} | ${mask(resumeData.phone, 'phone')} | ${mask(resumeData.links, 'links')}
             </div>
         </div>
-        
-        <div class="mb-4">
-            <p class="text-sm text-gray-700 leading-relaxed">${safeSummary}</p>
-        </div>
-
+        <div class="mb-4"><p class="text-sm text-gray-700 leading-relaxed">${sanitize(resumeData.summary)}</p></div>
         <div class="mb-4">
             <h2 class="text-lg font-bold text-gray-800 border-b-2 border-gray-300 mb-2 uppercase tracking-wider">Experience</h2>
-            <div class="space-y-3">
-    `;
+            <div class="space-y-3">`;
 
     resumeData.experience.forEach(exp => {
-        html += `
-            <div>
-                <div class="flex justify-between items-baseline mb-1">
-                    <h3 class="font-bold text-gray-800 text-sm">${sanitize(exp.role)}</h3>
-                    <span class="text-xs text-gray-500 font-medium">${sanitize(exp.dates)}</span>
-                </div>
-                <div class="text-sm text-gray-700 italic mb-1">${sanitize(exp.company)}</div>
-                <ul class="list-disc list-inside text-xs text-gray-600 space-y-0.5 ml-1">
-                    ${sanitize(exp.details).split('\n').map(d => `<li>${d.replace(/^•\s*/, '')}</li>`).join('')}
-                </ul>
+        html += `<div>
+            <div class="flex justify-between items-baseline mb-1">
+                <h3 class="font-bold text-gray-800 text-sm">${sanitize(exp.role)}</h3>
+                <span class="text-xs text-gray-500 font-medium">${sanitize(exp.dates)}</span>
             </div>
-        `;
+            <div class="text-sm text-gray-700 italic mb-1">${sanitize(exp.company)}</div>
+            <ul class="list-disc list-inside text-xs text-gray-600 space-y-0.5 ml-1">
+                ${sanitize(exp.details).split('\n').map(d => `<li>${d.replace(/^•\s*/, '')}</li>`).join('')}
+            </ul></div>`;
     });
 
-    html += `
-            </div>
-        </div>
-
-        <div class="mb-4">
-            <h2 class="text-lg font-bold text-gray-800 border-b-2 border-gray-300 mb-2 uppercase tracking-wider">Education</h2>
-    `;
+    html += `</div></div><div class="mb-4">
+        <h2 class="text-lg font-bold text-gray-800 border-b-2 border-gray-300 mb-2 uppercase tracking-wider">Education</h2>`;
 
     resumeData.education.forEach(edu => {
-        html += `
-            <div class="mb-2">
-                <div class="flex justify-between items-baseline">
-                    <h3 class="font-bold text-gray-800 text-sm">${sanitize(edu.school)}</h3>
-                    <span class="text-xs text-gray-500">${sanitize(edu.dates)}</span>
-                </div>
-                <div class="text-xs text-gray-700">${sanitize(edu.degree)}</div>
-                <div class="text-xs text-gray-500 italic">${sanitize(edu.details)}</div>
+        html += `<div class="mb-2">
+            <div class="flex justify-between items-baseline">
+                <h3 class="font-bold text-gray-800 text-sm">${sanitize(edu.school)}</h3>
+                <span class="text-xs text-gray-500">${sanitize(edu.dates)}</span>
             </div>
-        `;
+            <div class="text-xs text-gray-700">${sanitize(edu.degree)}</div>
+            <div class="text-xs text-gray-500 italic">${sanitize(edu.details)}</div></div>`;
     });
 
-    html += `
-        </div>
-
-        <div>
-            <h2 class="text-lg font-bold text-gray-800 border-b-2 border-gray-300 mb-2 uppercase tracking-wider">Skills</h2>
-            <p class="text-xs text-gray-700 leading-relaxed">${safeSkills}</p>
-        </div>
-    `;
+    html += `</div><div>
+        <h2 class="text-lg font-bold text-gray-800 border-b-2 border-gray-300 mb-2 uppercase tracking-wider">Skills</h2>
+        <p class="text-xs text-gray-700 leading-relaxed">${sanitize(resumeData.skills)}</p></div>`;
 
     previewContainer.innerHTML = html;
 }
 
 
+
 // --- INIT ---
-document.addEventListener('DOMContentLoaded', () => {
+function init() {
+    console.log("Initializing App...");
     monitorAuthState(async (user) => {
+        console.log("Auth state changed. User:", user ? user.uid : "None");
         if (user) {
             currentUser = user;
             // UI Updates
@@ -669,15 +921,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (document.getElementById('nav-user-icon')) document.getElementById('nav-user-icon').classList.remove('hidden');
             }
 
-            // Load Data
-            const saved = await getResume(user.uid);
-            if (saved && saved.data()) {
-                resumeData = { ...resumeData, ...saved.data() };
-                updateFormInputs();
-                renderPreview();
-                saveToLocal(); // Sync cloud data to local
-                initPrivacySettings(); // Ensure privacy settings are applied
-            }
+            // Load Resumes
+            await loadResumes();
         } else {
             currentUser = null;
             if (document.getElementById('nav-guest')) document.getElementById('nav-guest').classList.remove('hidden');
@@ -689,6 +934,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Auto-open app if hash is #app
         if (window.location.hash === '#app' && user) {
+            console.log("Hash is #app and user exists, going to app view");
             window.goToApp();
         }
     });
@@ -709,8 +955,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 resumeData[f] = e.target.value;
                 renderPreview();
                 saveToLocal();
-                if (currentUser) saveResume(currentUser.uid, resumeData);
+                if (currentUser) saveResume(currentUser.uid, resumeData, currentResumeId);
             });
         }
     });
-});
+}
+
+// Run init immediately (as we are a module, DOM is ready or already loaded)
+init();
