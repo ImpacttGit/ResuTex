@@ -465,9 +465,45 @@ window.updateEdu = (index, field, value) => {
     if (currentUser) saveResume(currentUser.uid, resumeData, currentResumeId);
 };
 window.downloadPDF = function () {
-    // Alert user about best practice
-    alert("Pro Tip: For the best quality (selectable text), choose 'Save as PDF' as the destination in the print dialog.");
-    window.print();
+    const tier = currentUserProfile?.tier || 'free';
+    if (tier === 'free') {
+        alert("High-quality LaTeX PDF export is a premium feature! We've opened the print dialog for you instead. Upgrade to Job Hunter or Student for professional PDF generation.");
+        window.print();
+        return;
+    }
+
+    // 1. Get Source
+    let tex;
+    if (isAdvancedMode) {
+        tex = document.getElementById('latex-code-input').value;
+    } else {
+        tex = generateLaTeXSource(false, true); // Real preamble for High Quality
+    }
+
+    // 2. Alert user
+    const btn = document.getElementById('download-pdf-btn');
+    const original = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Compiling...';
+    btn.disabled = true;
+
+    try {
+        // 3. Submit to hidden cloud form
+        document.getElementById('cloud-latex-text').value = tex;
+        document.getElementById('cloud-latex-form').submit();
+
+        // 4. Reset button after a delay
+        setTimeout(() => {
+            btn.innerHTML = original;
+            btn.disabled = false;
+            alert("Your high-quality PDF is being generated. It will open in a new tab shortly.");
+        }, 3000);
+    } catch (e) {
+        console.error(e);
+        alert("Cloud compilation failed. Falling back to local print.");
+        window.print();
+        btn.innerHTML = original;
+        btn.disabled = false;
+    }
 };
 
 // --- SAMPLE DATA & AUTOSAVE ---
@@ -606,7 +642,7 @@ window.toggleJobPanel = function () {
 // --- ADVANCED MODE LOGIC ---
 window.toggleAdvancedMode = function () {
     const toggle = document.getElementById('advanced-mode-switch');
-    const isChecked = toggle.checked;
+    const isEntering = toggle.checked;
 
     // 1. Tier Check
     const tier = currentUserProfile?.tier || 'free';
@@ -617,83 +653,253 @@ window.toggleAdvancedMode = function () {
         return;
     }
 
-    // 2. Switching TO Advanced Mode
-    if (isChecked) {
-        if (!confirm("Entering Advanced Mode allow you to edit the LaTeX code directly.\n\n⚠️ WARNING: Changes made here are NOT saved back to the form. If you switch back to Simple Mode, your manual code edits will be lost.")) {
-            toggle.checked = false;
-            return;
-        }
-
-        isAdvancedMode = true;
-
-        // Switch UI
-        document.querySelector('.w-1/2').classList.add('hidden'); // Hide Form Column
-        document.getElementById('advanced-toolbar').classList.remove('hidden');
-        document.getElementById('advanced-editor').classList.remove('hidden');
-
-        // Populate Editor
-        // We generate "Export" quality LaTeX for the editor so they see the real code
-        customLatexCode = generateLaTeXSource(false, true);
-        document.getElementById('latex-code-input').value = customLatexCode;
-
-        // Re-render preview with this code
-        recompileLatex();
-
+    if (isEntering) {
+        // Show HTML Warning
+        const modal = document.getElementById('advanced-warning-modal');
+        if (modal) modal.classList.remove('hidden');
     } else {
-        // 3. Switching BACK to Simple Mode
-        if (!confirm("⚠️ Are you sure? Switching back to Simple Mode will DISCARD your manual code changes and revert to the data in the form.")) {
-            toggle.checked = true;
-            return;
-        }
-
-        isAdvancedMode = false;
-        customLatexCode = "";
-
-        // Switch UI
-        document.querySelector('.w-1/2').classList.remove('hidden');
-        document.getElementById('advanced-toolbar').classList.add('hidden');
-        document.getElementById('advanced-editor').classList.add('hidden');
-
-        // Re-render from Form Data
-        renderPreview();
+        // Show HTML Return Warning
+        const modal = document.getElementById('simple-return-modal');
+        if (modal) modal.classList.remove('hidden');
     }
 };
 
-window.recompileLatex = function () {
-    const code = document.getElementById('latex-code-input').value;
-    customLatexCode = code;
+window.confirmAdvancedMode = function () {
+    isAdvancedMode = true;
+    document.getElementById('advanced-warning-modal').classList.add('hidden');
 
-    // Render using LaTeX.js
+    // Switch UI In Left Column
+    document.getElementById('simple-mode-ui').classList.add('hidden');
+    document.getElementById('advanced-mode-ui').classList.remove('hidden');
+
+    // Populate Editor
+    customLatexCode = generateLaTeXSource(false, true);
+    document.getElementById('latex-code-input').value = customLatexCode;
+
+    // Ensure Recompile runs once
+    recompileLatex();
+};
+
+window.cancelAdvancedMode = function () {
+    document.getElementById('advanced-warning-modal').classList.add('hidden');
+    document.getElementById('advanced-mode-switch').checked = false;
+};
+
+window.confirmSimpleMode = function () {
+    const rawCode = document.getElementById('latex-code-input').value;
+
+    // EXTRACT DATA FROM LATEX (Two-way sync)
+    const newData = parseLatexToData(rawCode);
+    if (newData) {
+        resumeData = newData;
+        updateFormInputs();
+    }
+
+    isAdvancedMode = false;
+    customLatexCode = "";
+    document.getElementById('simple-return-modal').classList.add('hidden');
+
+    // Switch UI In Left Column
+    document.getElementById('advanced-mode-ui').classList.add('hidden');
+    document.getElementById('simple-mode-ui').classList.remove('hidden');
+
+    // Re-render from Form Data
+    renderPreview();
+    saveToLocal();
+    if (currentUser) saveResume(currentUser.uid, resumeData, currentResumeId);
+};
+
+window.cancelSimpleMode = function () {
+    document.getElementById('simple-return-modal').classList.add('hidden');
+    document.getElementById('advanced-mode-switch').checked = true;
+};
+
+function parseLatexToData(latex) {
+    const data = JSON.parse(JSON.stringify(resumeData)); // Start with current
+
+    const unesc = (str) => {
+        if (!str) return '';
+        return str
+            .replace(/\\&/g, '&')
+            .replace(/\\%/g, '%')
+            .replace(/\\\$/g, '$')
+            .replace(/\\#/g, '#')
+            .replace(/\\_/g, '_')
+            .replace(/\\\{/g, '{')
+            .replace(/\\\}/g, '}')
+            .replace(/\\textasciitilde /g, '~')
+            .replace(/\\textasciicircum /g, '^')
+            .replace(/\\textbackslash /g, '\\');
+    };
+
+    // 1. Name
+    const nameMatch = latex.match(/\\textbf\{\\Huge \\scshape (.*?)\}/);
+    if (nameMatch) data.name = unesc(nameMatch[1]);
+
+    // 2. Contact
+    const contactBlock = latex.match(/\\small (.*?)(\\vspace|\\end\{center\}|\\small)/s);
+    if (contactBlock) {
+        const parts = contactBlock[1].split('$|$').map(s => unesc(s.trim()));
+        if (parts.length >= 1) data.phone = parts[0];
+        if (parts.length >= 2) data.email = parts[1];
+        if (parts.length >= 3) data.links = parts.slice(2).join(' | ');
+    }
+
+    // 3. Summary
+    const summaryMatch = latex.match(/\\section\{Summary\}\n(.*?)\n\n/s);
+    if (summaryMatch) data.summary = unesc(summaryMatch[1].trim());
+
+    // 4. Skills
+    const skillsMatch = latex.match(/\\section\{Technical Skills\}\n(?:\\small\{)?(.*?)(?:\})?\n/s);
+    if (skillsMatch) data.skills = unesc(skillsMatch[1].trim());
+
+    // 5. Experience (Very basic parser)
+    const expRegex = /\\textbf\{(.*?)\} \\hfill (.*?)\s*\\\\\s*\\textit\{\\small (.*?)\}(.*?)(?=\\section|\\end\{document\}|\\textbf\{|$)/gs;
+    const experiences = [];
+    let match;
+    while ((match = expRegex.exec(latex)) !== null) {
+        let details = match[4].replace(/\\begin\{itemize\}|\\end\{itemize\}|\\item \\small\{|\}/g, '').trim();
+        details = details.replace(/\\textit\{\\small .*?\}/g, '').trim(); // Remove loc
+        experiences.push({
+            role: unesc(match[1]),
+            dates: unesc(match[2]),
+            company: unesc(match[3]),
+            details: unesc(details)
+        });
+    }
+    if (experiences.length > 0) data.experience = experiences;
+
+    return data;
+}
+
+window.checkoutPlan = async function (tierId) {
+    if (!currentUser) {
+        alert("Please sign in to upgrade!");
+        window.location.href = 'signup.html';
+        return;
+    }
+
+    const planNames = { 'jobhunter': 'Job Hunter (Monthly)', 'student': 'Student Pass (Yearly)' };
+    const name = planNames[tierId] || tierId;
+
+    if (confirm(`Proceed to payment for ${name}? (Simulation)`)) {
+        try {
+            await updateUserTier(currentUser.uid, tierId);
+            alert("Payment successful! Your account has been upgraded.");
+            window.location.href = 'index.html#app';
+        } catch (e) {
+            console.error(e);
+            alert("Error upgrading tier: " + e.message);
+        }
+    }
+};
+
+let _advancedDebounce = null;
+window.recompileLatexDebounced = function () {
+    clearTimeout(_advancedDebounce);
+    _advancedDebounce = setTimeout(window.recompileLatex, 500);
+};
+
+window.recompileLatex = function () {
+    const rawCode = document.getElementById('latex-code-input').value;
+    if (!rawCode.trim()) {
+        document.getElementById('preview-page').innerHTML = '<div class="p-8 text-center text-gray-400 italic">Enter LaTeX code to see a preview...</div>';
+        return;
+    }
+    customLatexCode = rawCode;
+    _renderLocalLatex(rawCode);
+};
+
+window.cloudRecompileLatex = function () {
+    const rawCode = document.getElementById('latex-code-input').value;
+    const btn = event.currentTarget || document.querySelector('button[onclick="cloudRecompileLatex()"]');
+    const original = btn.innerHTML;
+
+    btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up fa-bounce mr-2"></i>Compiling...';
+    btn.disabled = true;
+
+    try {
+        // 1. Prepare Hidden Form
+        const form = document.getElementById('cloud-latex-form');
+        const input = document.getElementById('cloud-latex-text');
+        input.value = rawCode;
+
+        // 2. Prepare Preview Container with Iframe
+        const previewContainer = document.getElementById('preview-page');
+        previewContainer.innerHTML = `
+            <div class="w-full h-full flex flex-col">
+                <div class="bg-indigo-50 text-indigo-700 text-[10px] px-3 py-1 border-b border-indigo-100 flex justify-between items-center">
+                    <span><i class="fa-solid fa-cloud mr-1"></i> Cloud Rendered PDF</span>
+                    <button onclick="recompileLatex()" class="hover:underline font-bold">Back to Fast Preview</button>
+                </div>
+                <iframe name="preview-iframe" id="preview-iframe" class="flex-1 w-full border-none bg-gray-100"></iframe>
+            </div>
+        `;
+
+        // 3. Submit form to iframe target
+        form.submit();
+
+        // 4. Cleanup UI State after a delay (since we can't detect when iframe finishes loading easily)
+        setTimeout(() => {
+            btn.innerHTML = original;
+            btn.disabled = false;
+        }, 2000);
+
+    } catch (e) {
+        console.error(e);
+        alert("Cloud compilation failed. Falling back to local preview.");
+        _renderLocalLatex(rawCode);
+        btn.innerHTML = original;
+        btn.disabled = false;
+    }
+};
+
+function _renderLocalLatex(rawCode) {
+    let previewCode = rawCode;
+    const unsupportedPackages = ['fullpage', 'titlesec', 'marvosym', 'verbatim', 'enumitem', 'fancyhdr', 'babel', 'tabularx', 'latexsym', 'color'];
+    unsupportedPackages.forEach(pkg => {
+        const regex = new RegExp(`\\\\usepackage\\[.*?\\]\\{${pkg}\\}|\\\\usepackage\\{${pkg}\\}`, 'g');
+        previewCode = previewCode.replace(regex, `% [ResuTeX Preview: Removed ${pkg}]`);
+    });
+
+    previewCode = previewCode.replace(/\\begin\{tabular\*\}\{.*?\}\{(.*?)\}/g, '\\begin{tabular}{$1}');
+    previewCode = previewCode.replace(/\\end\{tabular\*\}/g, '\\end{tabular}');
+
+    if (!previewCode.includes('\\newcommand{\\hfill}')) {
+        previewCode = previewCode.replace(/\\begin\{document\}/, '\\newcommand{\\hfill}{\\hspace{\\fill}}\\begin{document}');
+    }
+
     const generator = new latexjs.HtmlGenerator({ hyphenate: false });
     try {
-        const parsed = latexjs.parse(code, { generator: generator });
-
-        // Clear and Append
+        const parsed = latexjs.parse(previewCode, { generator: generator });
         const previewContainer = document.getElementById('preview-page');
         previewContainer.innerHTML = '';
 
-        // Style Isolation (same as before)
         const style = document.createElement('style');
         style.innerHTML = `
-            .latex-container { font-family: 'Merriweather', serif !important; color: #000 !important; }
+            .latex-container { font-family: 'Merriweather', serif !important; color: #000 !important; width: 100%; }
             .latex-container h1, .latex-container h2, .latex-container h3 { font-family: 'Merriweather', serif !important; }
+            .latex-container section h1 { border-bottom: 1px solid #000; margin-bottom: 5pt; font-variant: small-caps; }
         `;
         previewContainer.appendChild(style);
 
         const wrapper = document.createElement('div');
-        wrapper.className = 'latex-container';
+        wrapper.className = 'latex-container w-full';
         wrapper.appendChild(parsed.domFragment());
         previewContainer.appendChild(wrapper);
 
     } catch (e) {
-        console.error("LaTeX Compile Error:", e);
-        // Show error to user in a friendly way?
         const previewContainer = document.getElementById('preview-page');
-        previewContainer.innerHTML = `<div class="p-4 text-red-600 font-mono text-sm bg-red-50 border border-red-200 rounded">
-            <strong>Compile Error:</strong><br>${e.message}
-        </div>`;
+        if (previewContainer) {
+            previewContainer.innerHTML = `<div class="p-6 text-red-600 font-mono text-sm bg-red-50 border border-red-100 rounded-lg">
+                <h4 class="font-bold mb-2"><i class="fa-solid fa-triangle-exclamation mr-2"></i>LaTeX Preview Error</h4>
+                <p class="mb-2 text-xs text-gray-600">Note: Your code is probably valid LaTeX, but our live-preview engine (LaTeX.js) has limitations. Use "Export to LaTeX" for the full result.</p>
+                <hr class="my-2 border-red-200">
+                <pre class="whitespace-pre-wrap">${e.message}</pre>
+            </div>`;
+        }
     }
-};
+}
 
 // --- DATA PORTABILITY ---
 window.exportJSON = function () {
@@ -971,7 +1177,13 @@ function _doRender() {
     // Try LaTeX.js rendering first
     if (typeof latexjs !== 'undefined') {
         try {
-            const texSource = generateLaTeXSource(true, false); // No hfill for preview
+            let texSource = generateLaTeXSource(true, false);
+
+            // Add \hfill shim if missing
+            if (!texSource.includes('\\newcommand{\\hfill}')) {
+                texSource = texSource.replace(/\\begin\{document\}/, '\\newcommand{\\hfill}{\\hspace{\\fill}}\\begin{document}');
+            }
+
             const generator = new latexjs.HtmlGenerator({ hyphenate: false });
             const parsed = latexjs.parse(texSource, { generator: generator });
 
@@ -1101,8 +1313,14 @@ function init() {
                 // Update Tier Badge
                 const badge = document.getElementById('user-plan-badge');
                 if (badge) {
-                    badge.className = `ml-auto plan-badge plan-${profile?.tier || 'free'}`;
-                    badge.textContent = (profile?.tier || 'free').charAt(0).toUpperCase() + (profile?.tier || 'free').slice(1);
+                    const tier = profile?.tier || 'free';
+                    badge.className = `ml-auto plan-badge plan-${tier}`;
+
+                    let label = tier.charAt(0).toUpperCase() + tier.slice(1);
+                    if (tier === 'jobhunter') label = "Job Hunter";
+                    if (tier === 'student') label = "Student";
+
+                    badge.textContent = label;
                     badge.classList.remove('hidden');
                 }
 

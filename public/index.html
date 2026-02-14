@@ -449,140 +449,169 @@
         <!-- Main Content Area -->
         <main class="flex-1 flex">
 
-            <!-- Left: Form Editor -->
-            <div class="w-1/2 bg-white border-r border-gray-200 flex flex-col h-full flex-shrink-0">
-                <!-- Updated Toolbar with "ATS Safe" -->
-                <div class="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white">
-                    <div class="flex items-center">
-                        <h2 class="font-bold text-gray-800 mr-4">Content Editor</h2>
-                        <!-- ATS Visualizer -->
-                        <div class="flex items-center bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200 cursor-help"
-                            title="Your template is certified ATS Friendly">
-                            <i class="fa-solid fa-shield-halved mr-2"></i>
-                            ATS Safe
-                        </div>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button onclick="loadSampleData()"
-                            class="text-xs text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-md hover:bg-indigo-100 font-medium transition mr-2 underline">
-                            Load Sample
-                        </button>
-                        <button onclick="triggerAIScan()" id="ai-scan-btn"
-                            class="flex items-center text-sm bg-green-50 text-green-700 px-3 py-1.5 rounded-md border border-green-200 hover:bg-green-100 transition">
-                            <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
-                            Auto-Fill from Resume (AI)
-                        </button>
-                    </div>
-                </div>
+            <!-- Left: Form Editor Wrapper -->
+            <div id="left-column"
+                class="w-1/2 bg-white border-r border-gray-200 flex flex-col h-full flex-shrink-0 relative">
 
-                <!-- Advanced Editor Toolbar (Hidden by default) -->
-                <div id="advanced-toolbar"
-                    class="hidden h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white shrink-0">
-                    <div class="flex items-center">
-                        <h2 class="font-bold text-gray-800 mr-4">Advanced Editor (LaTeX)</h2>
-                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-bold">PRO</span>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button onclick="recompileLatex()"
-                            class="flex items-center text-sm bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
-                            <i class="fa-solid fa-rotate-right mr-2"></i>
-                            Recompile
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Scrollable Form Area -->
-                <div class="flex-1 overflow-y-auto custom-scroll p-6 space-y-6">
-
-                    <!-- Section: Personal Info -->
-                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <h3 class="text-sm font-bold text-gray-700 uppercase mb-3 flex items-center">
-                            <i class="fa-regular fa-id-card mr-2"></i> Personal Info
-                        </h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="col-span-2">
-                                <label class="block text-xs font-medium text-gray-500 uppercase">Full Name</label>
-                                <input type="text" id="input-name"
-                                    class="w-full mt-1 p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
-                                    placeholder="e.g. Aidan Blakley">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-500 uppercase">Phone</label>
-                                <input type="text" id="input-phone"
-                                    class="w-full mt-1 p-2 border border-gray-300 rounded" placeholder="+44 7342 ...">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-500 uppercase">Email</label>
-                                <input type="text" id="input-email"
-                                    class="w-full mt-1 p-2 border border-gray-300 rounded"
-                                    placeholder="email@icloud.com">
-                            </div>
-                            <div class="col-span-2">
-                                <label class="block text-xs font-medium text-gray-500 uppercase">Links
-                                    (LinkedIn/GitHub)</label>
-                                <input type="text" id="input-links"
-                                    class="w-full mt-1 p-2 border border-gray-300 rounded"
-                                    placeholder="LinkedIn | GitHub">
+                <!-- SIMPLE MODE UI (Toolbar + Form) -->
+                <div id="simple-mode-ui" class="flex flex-col h-full">
+                    <!-- Updated Toolbar with "ATS Safe" -->
+                    <div class="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white">
+                        <div class="flex items-center">
+                            <h2 class="font-bold text-gray-800 mr-4">Content Editor</h2>
+                            <!-- ATS Visualizer -->
+                            <div class="flex items-center bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200 cursor-help"
+                                title="Your template is certified ATS Friendly">
+                                <i class="fa-solid fa-shield-halved mr-2"></i>
+                                ATS Safe
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Section: Summary -->
-                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="text-sm font-bold text-gray-700 uppercase flex items-center">
-                                <i class="fa-regular fa-user mr-2"></i> Professional Summary
-                            </h3>
-                            <button onclick="useAICredit(event, 5, 'Summary Optimized!')"
-                                class="text-xs text-indigo-600 font-medium hover:text-indigo-800 flex items-center">
-                                <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Rewrite (5 Credits)
+                        <div class="flex space-x-2">
+                            <button onclick="loadSampleData()"
+                                class="text-xs text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-md hover:bg-indigo-100 font-medium transition mr-2 underline">
+                                Load Sample
+                            </button>
+                            <button onclick="triggerAIScan()" id="ai-scan-btn"
+                                class="flex items-center text-sm bg-green-50 text-green-700 px-3 py-1.5 rounded-md border border-green-200 hover:bg-green-100 transition">
+                                <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
+                                Auto-Fill from Resume (AI)
                             </button>
                         </div>
-                        <textarea id="input-summary" rows="4"
-                            class="w-full p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
-                            placeholder="Aspiring Aerospace Engineering student..."></textarea>
                     </div>
 
-                    <!-- Section: Experience -->
-                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="text-sm font-bold text-gray-700 uppercase flex items-center">
-                                <i class="fa-solid fa-briefcase mr-2"></i> Experience
+                    <!-- Advanced Editor Toolbar (Hidden by default) -->
+                    <div id="advanced-toolbar"
+                        class="hidden h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white shrink-0">
+                        <div class="flex items-center">
+                            <h2 class="font-bold text-gray-800 mr-4">Advanced Editor (LaTeX)</h2>
+                            <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-bold">PRO</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="recompileLatex()"
+                                class="flex items-center text-sm bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
+                                <i class="fa-solid fa-rotate-right mr-2"></i>
+                                Recompile
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Scrollable Form Area -->
+                    <div class="flex-1 overflow-y-auto custom-scroll p-6 space-y-6">
+
+                        <!-- Section: Personal Info -->
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h3 class="text-sm font-bold text-gray-700 uppercase mb-3 flex items-center">
+                                <i class="fa-regular fa-id-card mr-2"></i> Personal Info
                             </h3>
-                            <button onclick="addExperience()"
-                                class="text-xs bg-white border border-gray-300 px-2 py-1 rounded hover:bg-gray-100">+
-                                Add</button>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="col-span-2">
+                                    <label class="block text-xs font-medium text-gray-500 uppercase">Full Name</label>
+                                    <input type="text" id="input-name"
+                                        class="w-full mt-1 p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
+                                        placeholder="e.g. Aidan Blakley">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 uppercase">Phone</label>
+                                    <input type="text" id="input-phone"
+                                        class="w-full mt-1 p-2 border border-gray-300 rounded"
+                                        placeholder="+44 7342 ...">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 uppercase">Email</label>
+                                    <input type="text" id="input-email"
+                                        class="w-full mt-1 p-2 border border-gray-300 rounded"
+                                        placeholder="email@icloud.com">
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="block text-xs font-medium text-gray-500 uppercase">Links
+                                        (LinkedIn/GitHub)</label>
+                                    <input type="text" id="input-links"
+                                        class="w-full mt-1 p-2 border border-gray-300 rounded"
+                                        placeholder="LinkedIn | GitHub">
+                                </div>
+                            </div>
                         </div>
 
-                        <div id="experience-list" class="space-y-4">
-                            <!-- JS will populate this -->
+                        <!-- Section: Summary -->
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-sm font-bold text-gray-700 uppercase flex items-center">
+                                    <i class="fa-regular fa-user mr-2"></i> Professional Summary
+                                </h3>
+                                <button onclick="useAICredit(event, 5, 'Summary Optimized!')"
+                                    class="text-xs text-indigo-600 font-medium hover:text-indigo-800 flex items-center">
+                                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Rewrite (5 Credits)
+                                </button>
+                            </div>
+                            <textarea id="input-summary" rows="4"
+                                class="w-full p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder="Aspiring Aerospace Engineering student..."></textarea>
                         </div>
-                    </div>
 
-                    <!-- Section: Education -->
-                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="text-sm font-bold text-gray-700 uppercase flex items-center">
-                                <i class="fa-solid fa-graduation-cap mr-2"></i> Education
+                        <!-- Section: Experience -->
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-sm font-bold text-gray-700 uppercase flex items-center">
+                                    <i class="fa-solid fa-briefcase mr-2"></i> Experience
+                                </h3>
+                                <button onclick="addExperience()"
+                                    class="text-xs bg-white border border-gray-300 px-2 py-1 rounded hover:bg-gray-100">+
+                                    Add</button>
+                            </div>
+
+                            <div id="experience-list" class="space-y-4">
+                                <!-- JS will populate this -->
+                            </div>
+                        </div>
+
+                        <!-- Section: Education -->
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-sm font-bold text-gray-700 uppercase flex items-center">
+                                    <i class="fa-solid fa-graduation-cap mr-2"></i> Education
+                                </h3>
+                                <button onclick="addEducation()"
+                                    class="text-xs bg-white border border-gray-300 px-2 py-1 rounded hover:bg-gray-100">+
+                                    Add</button>
+                            </div>
+                            <div id="education-list" class="space-y-4">
+                                <!-- JS will populate this -->
+                            </div>
+                        </div>
+
+                        <!-- Section: Skills -->
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h3 class="text-sm font-bold text-gray-700 uppercase mb-3 flex items-center">
+                                <i class="fa-solid fa-screwdriver-wrench mr-2"></i> Skills
                             </h3>
-                            <button onclick="addEducation()"
-                                class="text-xs bg-white border border-gray-300 px-2 py-1 rounded hover:bg-gray-100">+
-                                Add</button>
+                            <textarea id="input-skills" rows="3" class="w-full p-2 border border-gray-300 rounded"
+                                placeholder="Python, Bot Development, Process Automation..."></textarea>
                         </div>
-                        <div id="education-list" class="space-y-4">
-                            <!-- JS will populate this -->
+
+                    </div>
+                </div> <!-- End Simple Mode UI -->
+
+                <!-- ADVANCED MODE UI (Toolbar + Editor) -->
+                <div id="advanced-mode-ui" class="hidden flex flex-col h-full">
+                    <div id="advanced-toolbar"
+                        class="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white shrink-0">
+                        <div class="flex items-center">
+                            <h2 class="font-bold text-gray-800 mr-4">Advanced Editor (LaTeX)</h2>
+                            <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-bold">PRO</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="recompileLatex()"
+                                class="flex items-center text-sm bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
+                                <i class="fa-solid fa-rotate-right mr-2"></i>
+                                Refresh Preview
+                            </button>
                         </div>
                     </div>
-
-                    <!-- Section: Skills -->
-                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <h3 class="text-sm font-bold text-gray-700 uppercase mb-3 flex items-center">
-                            <i class="fa-solid fa-screwdriver-wrench mr-2"></i> Skills
-                        </h3>
-                        <textarea id="input-skills" rows="3" class="w-full p-2 border border-gray-300 rounded"
-                            placeholder="Python, Bot Development, Process Automation..."></textarea>
+                    <div id="advanced-editor-container" class="flex-1 p-0 relative h-full">
+                        <textarea id="latex-code-input" oninput="recompileLatexDebounced()"
+                            class="w-full h-full bg-gray-900 text-gray-200 font-mono text-sm p-4 outline-none resize-none"
+                            spellcheck="false" placeholder="% Loading LaTeX source..."></textarea>
                     </div>
-
                 </div>
             </div>
 
@@ -743,14 +772,63 @@
         </div>
     </div>
 
+    <!-- Advanced Mode Warning Modal -->
+    <div id="advanced-warning-modal"
+        class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-[70]">
+        <div class="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 text-center">
+            <div
+                class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-amber-100 mb-6 font-bold text-amber-600 text-3xl">
+                !</div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Advanced Editor</h3>
+            <p class="text-gray-600 mb-6 text-sm">
+                Ready to take full control? You can now edit the raw LaTeX source code.
+                Your changes will be synced back to the form automatically.
+            </p>
+            <div class="flex space-x-3">
+                <button onclick="confirmAdvancedMode()"
+                    class="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition">
+                    Continue to Code
+                </button>
+                <button onclick="cancelAdvancedMode()"
+                    class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-200 transition">
+                    Go Back
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIMPLE MODE Return Warning Modal -->
+    <div id="simple-return-modal"
+        class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-[70]">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 text-center">
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Switching Back</h3>
+            <p class="text-gray-600 mb-6 text-sm">
+                We'll sync your code edits back to the form fields now.
+            </p>
+            <div class="flex space-x-3">
+                <button onclick="confirmSimpleMode()"
+                    class="flex-1 bg-indigo-600 text-white py-2 rounded-lg font-bold hover:bg-indigo-700 transition">
+                    Sync & Return
+                </button>
+                <button onclick="cancelSimpleMode()"
+                    class="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg font-bold hover:bg-gray-200 transition">
+                    Stay in Advanced
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cloud LaTeX Helper (Hidden) -->
+    <form id="cloud-latex-form" method="POST" action="https://texlive.net/cgi-bin/latexcgi" target="_blank"
+        enctype="multipart/form-data" class="hidden">
+        <input type="hidden" name="filecontents[]" id="cloud-latex-text">
+        <input type="hidden" name="filename[]" value="main.tex">
+        <input type="hidden" name="engine" value="pdflatex">
+        <input type="hidden" name="return" value="pdf">
+    </form>
+
     <script src="assets/js/templates.js"></script>
-    <script>
-        // Dynamic script loader to ensure cache busting
-        const script = document.createElement('script');
-        script.type = 'module';
-        script.src = `assets/js/script.js?v=${new Date().getTime()}`;
-        document.body.appendChild(script);
-    </script>
+    <script type="module" src="assets/js/script.js?v=4"></script>
 </body>
 
 </html>
