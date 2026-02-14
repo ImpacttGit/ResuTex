@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +13,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Google Fonts: Merriweather mimics the standard LaTeX Computer Modern serif look -->
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/styles.css">
@@ -21,7 +24,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
+
 <body class="bg-gray-50 text-gray-800">
+
+    <!-- Mobile Warning -->
+    <div id="mobile-warning"
+        class="fixed inset-0 bg-gray-900 z-[100] md:hidden flex flex-col items-center justify-center text-center p-8 text-white">
+        <i class="fa-solid fa-desktop text-6xl mb-6 text-indigo-400"></i>
+        <h2 class="text-2xl font-bold mb-2">Desktop Experience Required</h2>
+        <p class="text-gray-300">ResuTeX is a professional editor designed for large screens. Please switch to a laptop
+            or desktop computer for the best experience.</p>
+    </div>
+
+    <!-- Feedback Button -->
+    <a id="feedback-btn" href="mailto:support@resutex.com"
+        class="fixed bottom-6 right-6 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition z-50 flex items-center justify-center w-12 h-12"
+        title="Report a Bug">
+        <i class="fa-solid fa-bug"></i>
+    </a>
 
     <!-- ================= LANDING PAGE VIEW ================= -->
     <div id="landing-page" class="flex flex-col min-h-screen">
@@ -37,27 +57,38 @@
                         <!-- Guest Nav -->
                         <div id="nav-guest" class="flex items-center space-x-4">
                             <a href="login.html" class="text-gray-600 hover:text-gray-900">Sign In</a>
-                            <a href="signup.html" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">Sign Up</a>
+                            <a href="signup.html"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">Sign
+                                Up</a>
                         </div>
                         <!-- User Nav -->
                         <div id="nav-user" class="hidden relative">
-                            <button onclick="toggleProfileMenu()" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none">
+                            <button onclick="toggleProfileMenu()"
+                                class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none">
                                 <span id="nav-user-name" class="font-medium text-sm hidden md:block">User</span>
-                                <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 border border-indigo-200 overflow-hidden">
+                                <div
+                                    class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 border border-indigo-200 overflow-hidden">
                                     <img id="nav-user-photo" src="" class="w-full h-full object-cover hidden">
                                     <i id="nav-user-icon" class="fa-solid fa-user text-sm"></i>
                                 </div>
                                 <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
                             </button>
                             <!-- Dropdown -->
-                            <div id="profile-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
+                            <div id="profile-menu"
+                                class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
                                 <div class="px-4 py-2 border-b border-gray-100">
                                     <p class="text-xs text-gray-500">Signed in as</p>
                                     <p id="nav-user-email" class="text-sm font-medium text-gray-900 truncate">...</p>
                                 </div>
-                                <button onclick="openSettingsModal()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Account Settings</button>
-                                <button onclick="viewPlans()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Subscription Plans</button>
-                                <button onclick="logoutUser()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Sign out</button>
+                                <button onclick="openSettingsModal()"
+                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Account
+                                    Settings</button>
+                                <button onclick="viewPlans()"
+                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Subscription
+                                    Plans</button>
+                                <button onclick="logoutUser()"
+                                    class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Sign
+                                    out</button>
                             </div>
                         </div>
                     </div>
@@ -73,13 +104,16 @@
                     <span class="block text-indigo-600">The Safety of ATS-Friendly.</span>
                 </h1>
                 <p class="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-                    Stop choosing between beautiful design and getting hired. Our AI-powered builder creates standard, single-column LaTeX resumes guaranteed to pass robot screeners.
+                    Stop choosing between beautiful design and getting hired. Our AI-powered builder creates standard,
+                    single-column LaTeX resumes guaranteed to pass robot screeners.
                 </p>
                 <div class="mt-10 max-w-sm mx-auto sm:max-w-none sm:flex sm:justify-center">
-                    <a href="#" onclick="goToApp()" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10">
+                    <a href="#" onclick="goToApp()"
+                        class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10">
                         Build My Resume Free
                     </a>
-                    <a href="plans.html" onclick="viewPlans()" class="mt-3 sm:mt-0 sm:ml-3 w-full flex items-center justify-center px-8 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
+                    <a href="plans.html" onclick="viewPlans()"
+                        class="mt-3 sm:mt-0 sm:ml-3 w-full flex items-center justify-center px-8 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
                         View Student Plans
                     </a>
                 </div>
@@ -90,25 +124,31 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
                         <div class="text-center p-6">
-                            <div class="h-12 w-12 mx-auto bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+                            <div
+                                class="h-12 w-12 mx-auto bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
                                 <i class="fa-solid fa-robot text-xl"></i>
                             </div>
                             <h3 class="text-lg font-bold mb-2">100% ATS Certified</h3>
-                            <p class="text-gray-500">Our templates are tested against Taleo, Greenhouse, and Lever. No columns, no hidden tables, just clean parsing.</p>
+                            <p class="text-gray-500">Our templates are tested against Taleo, Greenhouse, and Lever. No
+                                columns, no hidden tables, just clean parsing.</p>
                         </div>
                         <div class="text-center p-6">
-                            <div class="h-12 w-12 mx-auto bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+                            <div
+                                class="h-12 w-12 mx-auto bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
                                 <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
                             </div>
                             <h3 class="text-lg font-bold mb-2">AI Co-Pilot</h3>
-                            <p class="text-gray-500">Tailor your resume for every single application. Scan job ads and rewrite bullet points in seconds.</p>
+                            <p class="text-gray-500">Tailor your resume for every single application. Scan job ads and
+                                rewrite bullet points in seconds.</p>
                         </div>
                         <div class="text-center p-6">
-                            <div class="h-12 w-12 mx-auto bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+                            <div
+                                class="h-12 w-12 mx-auto bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
                                 <i class="fa-solid fa-code text-xl"></i>
                             </div>
                             <h3 class="text-lg font-bold mb-2">LaTeX Polish, No Code</h3>
-                            <p class="text-gray-500">Get the prestigious "Computer Modern" font look that STEM employers love, without writing a single line of code.</p>
+                            <p class="text-gray-500">Get the prestigious "Computer Modern" font look that STEM employers
+                                love, without writing a single line of code.</p>
                         </div>
                     </div>
                 </div>
@@ -130,29 +170,48 @@
                                 <span class="text-4xl font-extrabold text-gray-900">£0</span>
                             </div>
                             <ul class="space-y-3 mb-8 flex-1">
-                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> 5 Free AI Auto-Scans</li>
-                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> 1 Basic ATS Template</li>
-                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> Unlimited PDF Downloads</li>
-                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> No Watermark</li>
+                                <li class="flex items-center text-sm text-gray-600"><i
+                                        class="fa-solid fa-check text-green-500 mr-2"></i> 5 Free AI Auto-Scans</li>
+                                <li class="flex items-center text-sm text-gray-600"><i
+                                        class="fa-solid fa-check text-green-500 mr-2"></i> 1 Basic ATS Template</li>
+                                <li class="flex items-center text-sm text-gray-600"><i
+                                        class="fa-solid fa-check text-green-500 mr-2"></i> Unlimited PDF Downloads</li>
+                                <li class="flex items-center text-sm text-gray-600"><i
+                                        class="fa-solid fa-check text-green-500 mr-2"></i> No Watermark</li>
                             </ul>
-                            <a href="signup.html" class="w-full bg-indigo-50 text-indigo-700 font-semibold py-2 rounded-lg hover:bg-indigo-100 text-center">Start Free</a>
+                            <a href="signup.html"
+                                class="w-full bg-indigo-50 text-indigo-700 font-semibold py-2 rounded-lg hover:bg-indigo-100 text-center">Start
+                                Free</a>
                         </div>
-                        
+
                         <!-- Monthly -->
-                        <div class="bg-white rounded-2xl shadow-xl border-2 border-indigo-600 p-8 flex flex-col relative transform scale-105">
-                            <div class="absolute top-0 right-0 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">MOST POPULAR</div>
+                        <div
+                            class="bg-white rounded-2xl shadow-xl border-2 border-indigo-600 p-8 flex flex-col relative transform scale-105">
+                            <div
+                                class="absolute top-0 right-0 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">
+                                MOST POPULAR</div>
                             <h3 class="text-xl font-semibold text-gray-900">Job Hunter</h3>
                             <p class="text-gray-500 mt-2 text-sm">For active application seasons.</p>
                             <div class="my-6">
-                                <span class="text-4xl font-extrabold text-gray-900">£10</span><span class="text-gray-500">/mo</span>
+                                <span class="text-4xl font-extrabold text-gray-900">£10</span><span
+                                    class="text-gray-500">/mo</span>
                             </div>
                             <ul class="space-y-3 mb-8 flex-1">
-                                <li class="flex items-center text-sm text-gray-900 font-medium"><i class="fa-solid fa-check text-indigo-600 mr-2"></i> 1,000 AI Credits / Month</li>
-                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> AI Bullet Rewriter & Job Matcher</li>
-                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> Access all 20+ Templates</li>
-                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> Download .tex Source Code</li>
+                                <li class="flex items-center text-sm text-gray-900 font-medium"><i
+                                        class="fa-solid fa-check text-indigo-600 mr-2"></i> 1,000 AI Credits / Month
+                                </li>
+                                <li class="flex items-center text-sm text-gray-600"><i
+                                        class="fa-solid fa-check text-green-500 mr-2"></i> AI Bullet Rewriter & Job
+                                    Matcher</li>
+                                <li class="flex items-center text-sm text-gray-600"><i
+                                        class="fa-solid fa-check text-green-500 mr-2"></i> Access all 20+ Templates</li>
+                                <li class="flex items-center text-sm text-gray-600"><i
+                                        class="fa-solid fa-check text-green-500 mr-2"></i> Download .tex Source Code
+                                </li>
                             </ul>
-                            <a href="signup.html" class="w-full bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-700 text-center">Subscribe Monthly</a>
+                            <a href="signup.html"
+                                class="w-full bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-700 text-center">Subscribe
+                                Monthly</a>
                         </div>
 
                         <!-- Annual -->
@@ -160,15 +219,24 @@
                             <h3 class="text-xl font-semibold text-gray-900">Student Pass</h3>
                             <p class="text-gray-500 mt-2 text-sm">Cover your whole year of internships.</p>
                             <div class="my-6">
-                                <span class="text-4xl font-extrabold text-gray-900">£49</span><span class="text-gray-500">/yr</span>
+                                <span class="text-4xl font-extrabold text-gray-900">£49</span><span
+                                    class="text-gray-500">/yr</span>
                             </div>
-                            <p class="text-xs text-green-600 font-semibold mb-4 bg-green-50 inline-block px-2 py-1 rounded">Equivalent to £4.09/mo (14p/day)</p>
+                            <p
+                                class="text-xs text-green-600 font-semibold mb-4 bg-green-50 inline-block px-2 py-1 rounded">
+                                Equivalent to £4.09/mo (14p/day)</p>
                             <ul class="space-y-3 mb-8 flex-1">
-                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> 12,000 AI Credits (Upfront)</li>
-                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> All Premium Features</li>
-                                <li class="flex items-center text-sm text-gray-600"><i class="fa-solid fa-check text-green-500 mr-2"></i> Priority Support</li>
+                                <li class="flex items-center text-sm text-gray-600"><i
+                                        class="fa-solid fa-check text-green-500 mr-2"></i> 12,000 AI Credits (Upfront)
+                                </li>
+                                <li class="flex items-center text-sm text-gray-600"><i
+                                        class="fa-solid fa-check text-green-500 mr-2"></i> All Premium Features</li>
+                                <li class="flex items-center text-sm text-gray-600"><i
+                                        class="fa-solid fa-check text-green-500 mr-2"></i> Priority Support</li>
                             </ul>
-                            <a href="signup.html" class="w-full bg-indigo-50 text-indigo-700 font-semibold py-2 rounded-lg hover:bg-indigo-100 text-center">Get Student Pass</a>
+                            <a href="signup.html"
+                                class="w-full bg-indigo-50 text-indigo-700 font-semibold py-2 rounded-lg hover:bg-indigo-100 text-center">Get
+                                Student Pass</a>
                         </div>
                     </div>
                 </div>
@@ -182,13 +250,15 @@
                     <div>
                         <h3 class="text-sm font-semibold tracking-wider uppercase">Legal</h3>
                         <ul class="mt-4 space-y-4">
-                            <li><a href="terms.html" class="text-base text-gray-300 hover:text-white">Terms & Conditions</a></li>
+                            <li><a href="terms.html" class="text-base text-gray-300 hover:text-white">Terms &
+                                    Conditions</a></li>
                         </ul>
                     </div>
                     <div>
                         <h3 class="text-sm font-semibold tracking-wider uppercase">Support</h3>
                         <ul class="mt-4 space-y-4">
-                            <li><a href="help.html" class="text-base text-gray-300 hover:text-white">Help Center</a></li>
+                            <li><a href="help.html" class="text-base text-gray-300 hover:text-white">Help Center</a>
+                            </li>
                         </ul>
                     </div>
                     <div>
@@ -199,7 +269,8 @@
                     </div>
                 </div>
                 <div class="mt-8 border-t border-gray-700 pt-8 md:flex md:items-center md:justify-between">
-                    <p class="mt-8 text-base text-gray-400 md:mt-0 md:order-1">&copy; 2025 ResuTeX. All rights reserved.</p>
+                    <p class="mt-8 text-base text-gray-400 md:mt-0 md:order-1">&copy; 2025 ResuTeX. All rights reserved.
+                    </p>
                 </div>
             </div>
         </footer>
@@ -207,34 +278,39 @@
 
     <!-- ================= APP / EDITOR VIEW (Hidden by default) ================= -->
     <div id="app-view" class="hidden flex h-screen bg-gray-100 overflow-hidden">
-        
+
         <!-- Sidebar -->
         <aside class="w-64 bg-gray-900 text-white flex flex-col">
             <button onclick="goHome()" class="p-4 border-b border-gray-800 flex items-center w-full text-left">
                 <i class="fa-solid fa-file-code text-indigo-500 text-xl mr-2"></i>
                 <span class="font-bold text-lg">ResuTeX</span>
             </button>
-            
+
             <div class="p-4">
                 <div class="bg-gray-800 rounded-lg p-3">
                     <p class="text-xs text-gray-400 mb-1">AI Credits Balance</p>
                     <div class="flex justify-between items-end">
                         <span id="credit-balance" class="text-xl font-bold text-indigo-400">50</span>
-                        <button onclick="showUpgradeModal()" class="text-xs text-white bg-indigo-600 px-2 py-1 rounded hover:bg-indigo-700">+ Top Up</button>
+                        <button onclick="showUpgradeModal()"
+                            class="text-xs text-white bg-indigo-600 px-2 py-1 rounded hover:bg-indigo-700">+ Top
+                            Up</button>
                     </div>
                 </div>
             </div>
 
             <nav class="flex-1 overflow-y-auto py-4">
-                <a href="#" id="editor-link" onclick="showEditorView()" class="flex items-center px-6 py-3 bg-gray-800 border-r-4 border-indigo-500">
+                <a href="#" id="editor-link" onclick="showEditorView()"
+                    class="flex items-center px-6 py-3 bg-gray-800 border-r-4 border-indigo-500">
                     <i class="fa-solid fa-pen-to-square w-6"></i>
                     <span class="font-medium">Editor</span>
                 </a>
-                <a href="#" id="templates-link" onclick="showTemplatesView()" class="flex items-center px-6 py-3 text-gray-400 hover:text-white hover:bg-gray-800">
+                <a href="#" id="templates-link" onclick="showTemplatesView()"
+                    class="flex items-center px-6 py-3 text-gray-400 hover:text-white hover:bg-gray-800">
                     <i class="fa-solid fa-layer-group w-6"></i>
                     <span class="font-medium">Templates</span>
                 </a>
-                <a href="#" id="ai-link" class="flex items-center px-6 py-3 text-gray-400 hover:text-white hover:bg-gray-800">
+                <a href="#" id="ai-link"
+                    class="flex items-center px-6 py-3 text-gray-400 hover:text-white hover:bg-gray-800">
                     <i class="fa-solid fa-wand-magic-sparkles w-6 text-indigo-400"></i>
                     <span class="font-medium text-indigo-200">AI Co-Pilot</span>
                 </a>
@@ -250,21 +326,28 @@
 
         <!-- Main Content Area -->
         <main class="flex-1 flex">
-            
+
             <!-- Left: Form Editor -->
             <div class="w-1/2 bg-white border-r border-gray-200 flex flex-col h-full flex-shrink-0">
                 <!-- Toolbar -->
                 <div class="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white">
                     <h2 class="font-bold text-gray-800">Content Editor</h2>
-                    <button onclick="triggerAIScan()" id="ai-scan-btn" class="flex items-center text-sm bg-green-50 text-green-700 px-3 py-1.5 rounded-md border border-green-200 hover:bg-green-100 transition">
-                        <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
-                        Auto-Fill from Resume (AI)
-                    </button>
+                    <div class="flex space-x-2">
+                        <button onclick="loadSampleData()"
+                            class="text-xs text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-md hover:bg-indigo-100 font-medium transition">
+                            Load Sample
+                        </button>
+                        <button onclick="triggerAIScan()" id="ai-scan-btn"
+                            class="flex items-center text-sm bg-green-50 text-green-700 px-3 py-1.5 rounded-md border border-green-200 hover:bg-green-100 transition">
+                            <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
+                            Auto-Fill from Resume (AI)
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Scrollable Form Area -->
                 <div class="flex-1 overflow-y-auto custom-scroll p-6 space-y-6">
-                    
+
                     <!-- Section: Personal Info -->
                     <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                         <h3 class="text-sm font-bold text-gray-700 uppercase mb-3 flex items-center">
@@ -273,19 +356,27 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div class="col-span-2">
                                 <label class="block text-xs font-medium text-gray-500 uppercase">Full Name</label>
-                                <input type="text" id="input-name" class="w-full mt-1 p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g. Aidan Blakley">
+                                <input type="text" id="input-name"
+                                    class="w-full mt-1 p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
+                                    placeholder="e.g. Aidan Blakley">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-500 uppercase">Phone</label>
-                                <input type="text" id="input-phone" class="w-full mt-1 p-2 border border-gray-300 rounded" placeholder="+44 7342 ...">
+                                <input type="text" id="input-phone"
+                                    class="w-full mt-1 p-2 border border-gray-300 rounded" placeholder="+44 7342 ...">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-500 uppercase">Email</label>
-                                <input type="text" id="input-email" class="w-full mt-1 p-2 border border-gray-300 rounded" placeholder="email@icloud.com">
+                                <input type="text" id="input-email"
+                                    class="w-full mt-1 p-2 border border-gray-300 rounded"
+                                    placeholder="email@icloud.com">
                             </div>
                             <div class="col-span-2">
-                                <label class="block text-xs font-medium text-gray-500 uppercase">Links (LinkedIn/GitHub)</label>
-                                <input type="text" id="input-links" class="w-full mt-1 p-2 border border-gray-300 rounded" placeholder="LinkedIn | GitHub">
+                                <label class="block text-xs font-medium text-gray-500 uppercase">Links
+                                    (LinkedIn/GitHub)</label>
+                                <input type="text" id="input-links"
+                                    class="w-full mt-1 p-2 border border-gray-300 rounded"
+                                    placeholder="LinkedIn | GitHub">
                             </div>
                         </div>
                     </div>
@@ -296,11 +387,14 @@
                             <h3 class="text-sm font-bold text-gray-700 uppercase flex items-center">
                                 <i class="fa-regular fa-user mr-2"></i> Professional Summary
                             </h3>
-                            <button onclick="useAICredit(event, 5, 'Summary Optimized!')" class="text-xs text-indigo-600 font-medium hover:text-indigo-800 flex items-center">
+                            <button onclick="useAICredit(event, 5, 'Summary Optimized!')"
+                                class="text-xs text-indigo-600 font-medium hover:text-indigo-800 flex items-center">
                                 <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Rewrite (5 Credits)
                             </button>
                         </div>
-                        <textarea id="input-summary" rows="4" class="w-full p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500" placeholder="Aspiring Aerospace Engineering student..."></textarea>
+                        <textarea id="input-summary" rows="4"
+                            class="w-full p-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="Aspiring Aerospace Engineering student..."></textarea>
                     </div>
 
                     <!-- Section: Experience -->
@@ -309,9 +403,11 @@
                             <h3 class="text-sm font-bold text-gray-700 uppercase flex items-center">
                                 <i class="fa-solid fa-briefcase mr-2"></i> Experience
                             </h3>
-                            <button class="text-xs bg-white border border-gray-300 px-2 py-1 rounded hover:bg-gray-100">+ Add</button>
+                            <button
+                                class="text-xs bg-white border border-gray-300 px-2 py-1 rounded hover:bg-gray-100">+
+                                Add</button>
                         </div>
-                        
+
                         <div id="experience-list" class="space-y-4">
                             <!-- JS will populate this -->
                         </div>
@@ -323,7 +419,9 @@
                             <h3 class="text-sm font-bold text-gray-700 uppercase flex items-center">
                                 <i class="fa-solid fa-graduation-cap mr-2"></i> Education
                             </h3>
-                            <button class="text-xs bg-white border border-gray-300 px-2 py-1 rounded hover:bg-gray-100">+ Add</button>
+                            <button
+                                class="text-xs bg-white border border-gray-300 px-2 py-1 rounded hover:bg-gray-100">+
+                                Add</button>
                         </div>
                         <div id="education-list" class="space-y-4">
                             <!-- JS will populate this -->
@@ -335,7 +433,8 @@
                         <h3 class="text-sm font-bold text-gray-700 uppercase mb-3 flex items-center">
                             <i class="fa-solid fa-screwdriver-wrench mr-2"></i> Skills
                         </h3>
-                        <textarea id="input-skills" rows="3" class="w-full p-2 border border-gray-300 rounded" placeholder="Python, Bot Development, Process Automation..."></textarea>
+                        <textarea id="input-skills" rows="3" class="w-full p-2 border border-gray-300 rounded"
+                            placeholder="Python, Bot Development, Process Automation..."></textarea>
                     </div>
 
                 </div>
@@ -343,13 +442,15 @@
 
             <!-- Right: Preview (The "Paper") -->
             <div class="flex-1 bg-gray-200 overflow-x-auto p-8 flex justify-center">
-                
+
                 <!-- Floating Action Buttons -->
                 <div class="absolute top-4 right-8 flex space-x-2 z-10">
-                    <button onclick="renderPreview()" class="bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50">
+                    <button onclick="renderPreview()"
+                        class="bg-white text-gray-700 px-3 py-2 rounded shadow text-sm font-medium hover:bg-gray-50">
                         <i class="fa-solid fa-eye mr-1"></i> Preview
                     </button>
-                    <button id="download-pdf-btn" onclick="downloadPDF()" class="bg-indigo-600 text-white px-4 py-2 rounded shadow text-sm font-medium hover:bg-indigo-700">
+                    <button id="download-pdf-btn" onclick="downloadPDF()"
+                        class="bg-indigo-600 text-white px-4 py-2 rounded shadow text-sm font-medium hover:bg-indigo-700">
                         <i class="fa-solid fa-download mr-2"></i> Download PDF
                     </button>
                 </div>
@@ -367,14 +468,16 @@
             <!-- Toolbar -->
             <div class="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white">
                 <h2 class="font-bold text-gray-800">Templates</h2>
-                <button onclick="showEditorView()" class="flex items-center text-sm bg-gray-200 text-gray-800 px-3 py-1.5 rounded-md border border-gray-300 hover:bg-gray-300 transition">
+                <button onclick="showEditorView()"
+                    class="flex items-center text-sm bg-gray-200 text-gray-800 px-3 py-1.5 rounded-md border border-gray-300 hover:bg-gray-300 transition">
                     <i class="fa-solid fa-arrow-left mr-2"></i>
                     Back to Editor
                 </button>
             </div>
 
             <!-- Scrollable Template Grid -->
-            <div id="templates-list" class="flex-1 overflow-y-auto custom-scroll p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="templates-list"
+                class="flex-1 overflow-y-auto custom-scroll p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Templates will be dynamically injected here -->
             </div>
         </div>
@@ -384,7 +487,8 @@
     <!-- ================= MODALS ================= -->
 
     <!-- Upgrade / Low Credit Modal -->
-    <div id="upgrade-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+    <div id="upgrade-modal"
+        class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
             <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
                 <i class="fa-solid fa-xmark text-xl"></i>
@@ -395,13 +499,15 @@
                 </div>
                 <h3 class="text-lg font-medium text-gray-900">Power Up Your Job Hunt</h3>
                 <p class="text-sm text-gray-500 mt-2">
-                    You need more AI Credits to perform this action. Upgrade to the <strong>Job Hunter</strong> plan to get 1,000 credits/month and unlock the full template gallery.
+                    You need more AI Credits to perform this action. Upgrade to the <strong>Job Hunter</strong> plan to
+                    get 1,000 credits/month and unlock the full template gallery.
                 </p>
                 <div class="mt-6 flex flex-col space-y-3">
                     <button class="w-full bg-indigo-600 text-white py-2 rounded-md font-semibold hover:bg-indigo-700">
                         Upgrade for £10/mo
                     </button>
-                    <button class="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-md font-semibold hover:bg-gray-50">
+                    <button
+                        class="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-md font-semibold hover:bg-gray-50">
                         Buy 500 Credits for £5
                     </button>
                 </div>
@@ -419,7 +525,8 @@
     </div>
 
     <!-- Account Settings Modal -->
-    <div id="settings-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+    <div id="settings-modal"
+        class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
             <button onclick="closeSettingsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
                 <i class="fa-solid fa-xmark text-xl"></i>
@@ -427,24 +534,33 @@
             <div class="text-center">
                 <h3 class="text-2xl font-bold text-gray-900 mb-4">Account Settings</h3>
                 <div class="mb-6">
-                    <div class="mx-auto h-24 w-24 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 border border-indigo-200 overflow-hidden mb-3">
+                    <div
+                        class="mx-auto h-24 w-24 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 border border-indigo-200 overflow-hidden mb-3">
                         <img id="settings-preview-img" src="" class="w-full h-full object-cover hidden">
                         <i id="settings-preview-icon" class="fa-solid fa-user text-3xl"></i>
                     </div>
-                    <input type="file" id="settings-file-input" accept="image/*" class="hidden" onchange="loadPhotoPreview(event)">
-                    <button onclick="document.getElementById('settings-file-input').click()" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">Upload Photo</button>
+                    <input type="file" id="settings-file-input" accept="image/*" class="hidden"
+                        onchange="loadPhotoPreview(event)">
+                    <button onclick="document.getElementById('settings-file-input').click()"
+                        class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">Upload Photo</button>
                 </div>
                 <div class="space-y-4">
                     <div>
-                        <label for="settings-display-name" class="block text-sm font-medium text-gray-700 text-left">Display Name</label>
-                        <input type="text" id="settings-display-name" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <label for="settings-display-name"
+                            class="block text-sm font-medium text-gray-700 text-left">Display Name</label>
+                        <input type="text" id="settings-display-name"
+                            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
-                    <button onclick="saveProfileSettings(event)" class="w-full bg-indigo-600 text-white py-2 rounded-md font-semibold hover:bg-indigo-700">Save Changes</button>
+                    <button onclick="saveProfileSettings(event)"
+                        class="w-full bg-indigo-600 text-white py-2 rounded-md font-semibold hover:bg-indigo-700">Save
+                        Changes</button>
                 </div>
             </div>
         </div>
     </div>
 
-        <script src="assets/js/templates.js"></script>
-        <script type="module" src="assets/js/script.js?v=<%= new Date().getTime() %>"></script>
-    </body></html>
+    <script src="assets/js/templates.js"></script>
+    <script type="module" src="assets/js/script.js?v=<%= new Date().getTime() %>"></script>
+</body>
+
+</html>
