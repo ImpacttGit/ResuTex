@@ -1,4 +1,4 @@
-import { monitorAuthState, saveResume, getResume, logoutUser, updateUserProfile } from './firebase-app.js';
+import { monitorAuthState, saveResume, getResume, logoutUser, updateUserProfile, resetUserPassword } from './firebase-app.js';
 let currentUser = null;
 let resumeData = {
     name: "John Doe",
@@ -113,6 +113,19 @@ window.saveProfileSettings = async function () {
     } finally {
         btn.innerText = originalText;
         btn.disabled = false;
+    }
+};
+
+window.triggerPasswordReset = async function () {
+    if (!currentUser || !currentUser.email) return;
+    if (confirm(`Send a password reset email to ${currentUser.email}?`)) {
+        try {
+            await resetUserPassword(currentUser.email);
+            alert("Email sent! Check your inbox to reset your password.");
+        } catch (error) {
+            console.error(error);
+            alert("Error: " + error.message);
+        }
     }
 };
 

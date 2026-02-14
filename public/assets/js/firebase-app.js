@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 // --- CONFIG ---
 const firebaseConfig = {
@@ -35,6 +35,10 @@ export async function registerUser(name, email, password) {
 
 export function loginUser(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
+}
+
+export function resetUserPassword(email) {
+    return sendPasswordResetEmail(auth, email);
 }
 
 export function logoutUser() {
