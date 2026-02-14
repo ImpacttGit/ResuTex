@@ -28,8 +28,8 @@
     <meta property="og:title" content="ResuTeX - ATS-Friendly LaTeX Resumes">
     <meta property="og:description"
         content="Build a professional, single-column LaTeX resume that passes robot screeners. No coding required.">
-    <meta property="og:image" content="https://resutex.com/assets/img/social-preview.png">
-    <meta property="og:url" content="https://resutex.com">
+    <meta property="og:image" content="https://resutex-6e173.web.app/assets/img/social-preview.png">
+    <meta property="og:url" content="https://resutex-6e173.web.app">
     <meta name="twitter:card" content="summary_large_image">
 
     <!-- Favicon -->
@@ -687,7 +687,13 @@
     </div>
 
     <script src="assets/js/templates.js"></script>
-    <script type="module" src="assets/js/script.js?v=<%= new Date().getTime() %>"></script>
+    <script>
+        // Dynamic script loader to ensure cache busting
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = `assets/js/script.js?v=${new Date().getTime()}`;
+        document.body.appendChild(script);
+    </script>
 </body>
 
 </html>

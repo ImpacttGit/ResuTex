@@ -412,11 +412,42 @@ function renderPreview() {
     };
 
     // Helper to mask text if privacy is enabled
-    // We use a fixed length of Xs to indicate hidden data without breaking layout too much
+    // We use smart masking based on the field type
     const mask = (text, field) => {
         if (!text) return '';
+
         // Only mask if Master Switch is ON AND (field is selected OR it's a legacy check)
         if (masterEnabled && privacySettings[field]) {
+            if (field === 'name') {
+                // Replace letters with X, keep spaces
+                return text.replace(/[a-zA-Z]/g, 'X');
+            }
+            if (field === 'email') {
+                // Standard placeholder
+                return 'xxx@example.com';
+            }
+            if (field === 'phone') {
+                // Keep the first few chars (country code/area code approx) then mask
+                // Try to keep formatting if possible
+                if (text.length > 5) {
+                    return text.substring(0, 5) + ' ' + 'X'.repeat(text.length - 5);
+                }
+                return 'XXX-XXX-XXXX';
+            }
+            if (field === 'links') {
+                // Try to keep the domain, mask the path
+                // e.g. "linkedin.com/in/johndoe" -> "linkedin.com/xxxxxxx"
+                // Handle multiple links separated by |
+                return text.split('|').map(link => {
+                    link = link.trim();
+                    const parts = link.split('/');
+                    if (parts.length > 1) {
+                        return parts[0] + '/xxxxxxx';
+                    }
+                    return 'xxxxxxx.com';
+                }).join(' | ');
+            }
+            // Fallback
             return 'X'.repeat(10);
         }
         return sanitize(text); // Always sanitize visible text
