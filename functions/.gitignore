@@ -1,0 +1,16 @@
+# Compiled JavaScript files
+# (only if using TypeScript, but good practice)
+lib/
+
+# TypeScript v1 declaration files
+typings/
+
+# Node.js dependencies
+node_modules/
+
+# Logs
+npm-debug.log
+yarn-error.log
+
+# Firebase cache
+.firebase/

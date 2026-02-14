@@ -1,3 +1,42 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js";
+
+// TODO: Replace with your actual Firebase project configuration
+// For local development with emulators, this might be auto-configured if using /__/firebase/init.js
+// but for this standalone file we'll need a placeholder or the init script.
+// Assuming we are running this in an environment where we can fetch config or it's hardcoded.
+// For now, I'll use a placeholder config. **USER MUST UPDATE THIS**
+const firebaseConfig = {
+    // apiKey: "...",
+    // authDomain: "...",
+    // projectId: "...",
+    // ...
+};
+
+// Try to use the auto-init if available (hosting), otherwise warn
+let app;
+let functions;
+
+try {
+    // If hosted on Firebase Hosting, this fetch works
+    const response = await fetch('/__/firebase/init.json');
+    const config = await response.json();
+    app = initializeApp(config);
+    functions = getFunctions(app);
+
+    // Connect to emulators if running locally (optional but good for dev)
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        const { connectFunctionsEmulator } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js");
+        connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+    }
+
+} catch (e) {
+    console.warn("Could not auto-initialize Firebase. Please set config manually in script.js if not using Hosting.", e);
+    // Fallback for non-hosting environment (e.g. just opening HTML file) requires manual config
+    // app = initializeApp(firebaseConfig);
+    // functions = getFunctions(app);
+}
+
 // --- State Management ---
 let resumeData = {
     name: "",
@@ -10,160 +49,213 @@ let resumeData = {
     skills: ""
 };
 
-let credits = 50; // Free user starts with small amount or the "5 free scans" logic
+let credits = 50; // Sync this with backend in Phase 3
 
 // --- Navigation ---
-function goToApp() {
+window.goToApp = function () {
     document.getElementById('landing-page').classList.add('hidden');
     document.getElementById('app-view').classList.remove('hidden');
     document.getElementById('app-view').classList.add('flex');
     renderPreview();
 }
 
-function goHome() {
+window.goHome = function () {
     document.getElementById('app-view').classList.add('hidden');
     document.getElementById('app-view').classList.remove('flex');
     document.getElementById('landing-page').classList.remove('hidden');
 }
 
 // --- Modal Logic ---
-function showUpgradeModal() {
+window.showUpgradeModal = function () {
     document.getElementById('upgrade-modal').classList.remove('hidden');
 }
 
-function closeModal() {
+window.closeModal = function () {
     document.getElementById('upgrade-modal').classList.add('hidden');
 }
 
-function useAICredit(cost, successMsg) {
-    if (credits >= cost) {
-        credits -= cost;
-        document.getElementById('credit-balance').innerText = credits;
-        // Simulating AI action delay
-        const btn = event.currentTarget;
-        const originalText = btn.innerHTML;
+// --- AI Rewriting ---
+window.useAICredit = async function (cost, successMsg) {
+    const btn = event.currentTarget;
+    const originalText = btn.innerHTML;
+
+    // Optimistic UI update or wait for check?
+    // Phase 3 will enforce server side checks.
+
+    // Get text to rewrite - strictly for Summary for now based on button placement
+    // In a real app we'd pass the target field ID
+    const summaryInput = document.getElementById('input-summary');
+    const textToRewrite = summaryInput.value;
+
+    if (!textToRewrite) {
+        alert("Please enter some text to rewrite first.");
+        return;
+    }
+
+    try {
         btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Working...`;
+        btn.disabled = true;
+
+        if (!functions) throw new Error("Firebase Functions not initialized");
+        const rewriteContent = httpsCallable(functions, 'rewriteContent');
+
+        const result = await rewriteContent({
+            text: textToRewrite,
+            instruction: "Make it more professional and concise."
+        });
+
+        const { rewrittenText } = result.data;
+
+        // Update UI
+        summaryInput.value = rewrittenText;
+        resumeData.summary = rewrittenText;
+        renderPreview();
+
+        credits -= cost; // Visual update only, real source of truth is backend
+        document.getElementById('credit-balance').innerText = credits;
+
+        btn.innerHTML = `<i class="fa-solid fa-check"></i> Done`;
         setTimeout(() => {
-            btn.innerHTML = `<i class="fa-solid fa-check"></i> Done`;
-            setTimeout(() => btn.innerHTML = originalText, 2000);
-            // Here we would actually update the text field with AI response
-        }, 1000);
-    } else {
-        showUpgradeModal();
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }, 2000);
+
+    } catch (error) {
+        console.error("Rewrite failed:", error);
+        alert("AI Rewrite failed: " + error.message);
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+
+        if (error.message.includes("credit")) {
+            showUpgradeModal();
+        }
     }
 }
 
-// --- AI Auto-Scan Simulation ---
-function triggerAIScan() {
+// --- AI Auto-Scan ---
+// Bind the file input listener
+document.addEventListener('DOMContentLoaded', () => {
+    const fileInput = document.getElementById('resume-upload');
+    if (fileInput) {
+        fileInput.addEventListener('change', handleFileUpload);
+    }
+});
+
+async function handleFileUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Show loading overlay
     document.getElementById('scan-overlay').classList.remove('hidden');
-    
-    // Simulate 2 second delay for parsing
-    setTimeout(() => {
-        // Populate with dummy data (based on the user's provided resume image content)
-        resumeData = {
-            name: "Aidan Blakley",
-            phone: "+44 7342 256745",
-            email: "aidan170206@icloud.com",
-            links: "LinkedIn | GitHub",
-            summary: "Aspiring Aerospace Engineering student with a distinction-level foundation in engineering, complemented by experience in logistics, project management, and entrepreneurial ventures. Eager to apply a strong work ethic, technical skills, and a passion for physics and mathematics to new challenges.",
-            experience: [
-                {
-                    role: "Founder & E-commerce Manager",
-                    company: "Remote Independent Reselling",
-                    dates: "2023 – Present",
-                    details: "• Engineered a custom sales bot in Python to automate transactions on third-party platforms.<br>• Manage and grow multiple social media platforms for the business.<br>• Currently building a new e-commerce store on Shopify to sell sourced products."
-                },
-                {
-                    role: "Flex Delivery Driver",
-                    company: "Amazon Flex (Bolton)",
-                    dates: "Aug 2024 – Present",
-                    details: "• Efficiently managed a high volume of local deliveries meeting strict deadlines.<br>• Utilised the Amazon Flex mobile application for route planning and navigation.<br>• Demonstrated exceptional problem-solving and reliability."
-                }
-            ],
-            education: [
-                {
-                    school: "University Of Manchester",
-                    degree: "MEng Aerospace Engineering",
-                    dates: "Sep 2025 – Jun 2031",
-                    details: "Manchester, UK"
-                },
-                {
-                    school: "Bury College",
-                    degree: "Level 3 Engineering – Distinction (Top of Year)",
-                    dates: "Sep 2022 – Jul 2024",
-                    details: "Bury, UK"
-                }
-            ],
-            skills: "Technical: Python, Bot Development, Process Automation, Shopify, Microsoft Office Suite, Google Workspace.\nCore Competencies: Engineering Fundamentals, E-commerce Management, Logistics."
-        };
+
+    try {
+        // Convert to Base64
+        const base64 = await convertToBase64(file);
+
+        if (!functions) throw new Error("Firebase Functions not initialized");
+        const scanResume = httpsCallable(functions, 'scanResume');
+
+        const result = await scanResume({
+            fileBase64: base64.split(',')[1], // Remove 'data:application/pdf;base64,' prefix
+            mimeType: file.type
+        });
+
+        // Merge response into resumeData
+        const scannedData = result.data;
+
+        // Basic mapping (assuming strict schema return)
+        resumeData = { ...resumeData, ...scannedData };
 
         updateFormInputs();
         renderPreview();
+
+        // Deduct scan credits (visual)
+        credits -= 5;
+        document.getElementById('credit-balance').innerText = credits;
+
+    } catch (error) {
+        console.error("Scan failed:", error);
+        alert("Resume Scan failed: " + error.message);
+    } finally {
         document.getElementById('scan-overlay').classList.add('hidden');
-        
-        // Deduct scan credits?
-        // For this demo we won't strictly enforce the "5 scans" logic but visually show it works.
-    }, 2000);
+        e.target.value = ''; // Reset input
+    }
 }
+
+function convertToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
+// Keep the old function as a wrapper or just remove it.
+// The button now clicks the file input directly.
 
 // --- Form <-> State Sync ---
 function updateFormInputs() {
-    document.getElementById('input-name').value = resumeData.name;
-    document.getElementById('input-phone').value = resumeData.phone;
-    document.getElementById('input-email').value = resumeData.email;
-    document.getElementById('input-links').value = resumeData.links;
-    document.getElementById('input-summary').value = resumeData.summary;
-    document.getElementById('input-skills').value = resumeData.skills;
-    
+    document.getElementById('input-name').value = resumeData.name || "";
+    document.getElementById('input-phone').value = resumeData.phone || "";
+    document.getElementById('input-email').value = resumeData.email || "";
+    document.getElementById('input-links').value = resumeData.links || "";
+    document.getElementById('input-summary').value = resumeData.summary || "";
+    document.getElementById('input-skills').value = resumeData.skills || "";
+
     // Render Experience inputs dynamic list
     const expList = document.getElementById('experience-list');
-    expList.innerHTML = resumeData.experience.map((job, index) => `
+    expList.innerHTML = (resumeData.experience || []).map((job, index) => `
         <div class="border-l-2 border-indigo-200 pl-3 mb-4">
-            <input type="text" value="${job.role}" class="w-full text-sm font-bold border-none bg-transparent focus:ring-0 p-0 mb-1" placeholder="Job Title">
-            <input type="text" value="${job.company}" class="w-full text-xs text-gray-500 border-none bg-transparent focus:ring-0 p-0 mb-1" placeholder="Company">
-            <input type="text" value="${job.dates}" class="w-full text-xs text-gray-400 border-none bg-transparent focus:ring-0 p-0 mb-2" placeholder="Dates">
-            <textarea rows="3" class="w-full text-xs border border-gray-200 rounded p-1">${job.details.replace(/<br>/g, '\n')}</textarea>
+            <input type="text" value="${job.role || ''}" class="w-full text-sm font-bold border-none bg-transparent focus:ring-0 p-0 mb-1" placeholder="Job Title">
+            <input type="text" value="${job.company || ''}" class="w-full text-xs text-gray-500 border-none bg-transparent focus:ring-0 p-0 mb-1" placeholder="Company">
+            <input type="text" value="${job.dates || ''}" class="w-full text-xs text-gray-400 border-none bg-transparent focus:ring-0 p-0 mb-2" placeholder="Dates">
+            <textarea rows="3" class="w-full text-xs border border-gray-200 rounded p-1">${(job.details || '').replace(/<br>/g, '\n')}</textarea>
         </div>
     `).join('');
 
     // Render Education inputs dynamic list
     const eduList = document.getElementById('education-list');
-    eduList.innerHTML = resumeData.education.map((edu, index) => `
+    eduList.innerHTML = (resumeData.education || []).map((edu, index) => `
         <div class="border-l-2 border-indigo-200 pl-3 mb-4">
-            <input type="text" value="${edu.school}" class="w-full text-sm font-bold border-none bg-transparent focus:ring-0 p-0 mb-1">
-            <input type="text" value="${edu.degree}" class="w-full text-xs text-gray-600 border-none bg-transparent focus:ring-0 p-0 mb-1">
-            <input type="text" value="${edu.dates}" class="w-full text-xs text-gray-400 border-none bg-transparent focus:ring-0 p-0">
+            <input type="text" value="${edu.school || ''}" class="w-full text-sm font-bold border-none bg-transparent focus:ring-0 p-0 mb-1">
+            <input type="text" value="${edu.degree || ''}" class="w-full text-xs text-gray-600 border-none bg-transparent focus:ring-0 p-0 mb-1">
+            <input type="text" value="${edu.dates || ''}" class="w-full text-xs text-gray-400 border-none bg-transparent focus:ring-0 p-0">
         </div>
     `).join('');
 }
 
 // Listen for typing in main inputs
-['name', 'phone', 'email', 'links', 'summary', 'skills'].forEach(field => {
-    document.addEventListener('DOMContentLoaded', function() {
-        const element = document.getElementById(`input-${field}`);
-        if (element) {
-            element.addEventListener('input', (e) => {
+// Note: We need to re-attach listeners if DOM elements are re-created (they aren't here for main inputs)
+document.addEventListener('DOMContentLoaded', () => {
+    ['name', 'phone', 'email', 'links', 'summary', 'skills'].forEach(field => {
+        const el = document.getElementById(`input-${field}`);
+        if (el) {
+            el.addEventListener('input', (e) => {
                 resumeData[field] = e.target.value;
                 renderPreview();
             });
         }
     });
+
+    // Initial Render
+    renderPreview();
 });
 
 // --- Render "LaTeX" Preview ---
 function renderPreview() {
     const preview = document.getElementById('preview-page');
-    
+    if (!preview) return; // Guard clause
+
     // HTML Structure simulating LaTeX 'Modern' template
-    // We use simple divs with specific classes defined in CSS
     let html = `
         <!-- Header -->
         <div class="text-center mb-6">
             <div class="latex-h1">${resumeData.name || "Your Name"}</div>
             <div class="text-sm">
-                ${resumeData.phone} <span class="mx-1">|</span>
-                <a href="#" class="text-blue-800 underline">${resumeData.email}</a> <span class="mx-1">|</span>
-                ${resumeData.links}
+                ${resumeData.phone || ""} <span class="mx-1">|</span>
+                <a href="#" class="text-blue-800 underline">${resumeData.email || ""}</a> <span class="mx-1">|</span>
+                ${resumeData.links || ""}
             </div>
         </div>
 
@@ -175,7 +267,7 @@ function renderPreview() {
         </div>` : ''}
 
         <!-- Experience -->
-        ${resumeData.experience.length > 0 ? `
+        ${(resumeData.experience && resumeData.experience.length > 0) ? `
         <div class="latex-section">Experience</div>
         <div>
             ${resumeData.experience.map(job => `
@@ -193,7 +285,7 @@ function renderPreview() {
         </div>` : ''}
 
         <!-- Education -->
-        ${resumeData.education.length > 0 ? `
+        ${(resumeData.education && resumeData.education.length > 0) ? `
         <div class="latex-section">Education</div>
         <div>
             ${resumeData.education.map(edu => `
@@ -218,19 +310,3 @@ function renderPreview() {
 
     preview.innerHTML = html;
 }
-
-// Initial Render
-document.addEventListener('DOMContentLoaded', function() {
-    renderPreview();
-    
-    // Set up input listeners after DOM is ready
-    ['name', 'phone', 'email', 'links', 'summary', 'skills'].forEach(field => {
-        const element = document.getElementById(`input-${field}`);
-        if (element) {
-            element.addEventListener('input', (e) => {
-                resumeData[field] = e.target.value;
-                renderPreview();
-            });
-        }
-    });
-});
