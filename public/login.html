@@ -91,7 +91,7 @@
                 btn.textContent = "Signing In...";
                 btn.disabled = true;
                 await loginUser(email, password);
-                window.location.href = 'index.html';
+                window.location.href = 'index.html#app';
             } catch (error) {
                 alert("Login Failed: " + error.message);
                 btn.textContent = "Sign in";

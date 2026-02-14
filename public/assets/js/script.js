@@ -160,7 +160,114 @@ window.showTemplatesView = () => {
 
 window.showUpgradeModal = () => document.getElementById('upgrade-modal').classList.remove('hidden');
 window.closeModal = () => document.getElementById('upgrade-modal').classList.add('hidden');
-window.triggerAIScan = () => alert("AI Scan coming soon!");
+window.triggerAIScan = () => alert("AI Scan coming soon! This will allow you to upload an existing PDF and have it auto-filled here.");
+
+window.useAICredit = (event, amount, successMsg) => {
+    if (credits < amount) {
+        window.showUpgradeModal();
+        return;
+    }
+    // Simulate AI Work
+    const btn = event.currentTarget;
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Thinking...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+        credits -= amount;
+        document.getElementById('credit-balance').textContent = credits;
+        alert(successMsg + " (Simulated AI feature)");
+        btn.innerHTML = originalContent;
+        btn.disabled = false;
+    }, 1500);
+};
+
+window.addExperience = () => {
+    resumeData.experience.push({ role: "", company: "", dates: "", details: "" });
+    renderExperienceFields();
+    renderPreview();
+    saveToLocal();
+    if (currentUser) saveResume(currentUser.uid, resumeData);
+};
+
+window.removeExperience = (index) => {
+    resumeData.experience.splice(index, 1);
+    renderExperienceFields();
+    renderPreview();
+    saveToLocal();
+    if (currentUser) saveResume(currentUser.uid, resumeData);
+};
+
+window.addEducation = () => {
+    resumeData.education.push({ school: "", degree: "", dates: "", details: "" });
+    renderEducationFields();
+    renderPreview();
+    saveToLocal();
+    if (currentUser) saveResume(currentUser.uid, resumeData);
+};
+
+window.removeEducation = (index) => {
+    resumeData.education.splice(index, 1);
+    renderEducationFields();
+    renderPreview();
+    saveToLocal();
+    if (currentUser) saveResume(currentUser.uid, resumeData);
+};
+
+function renderExperienceFields() {
+    const list = document.getElementById('experience-list');
+    if (!list) return;
+    list.innerHTML = resumeData.experience.map((exp, i) => `
+        <div class="p-3 bg-white border border-gray-200 rounded relative group">
+            <button onclick="removeExperience(${i})" class="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+            </button>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="col-span-2">
+                    <input type="text" value="${exp.role}" oninput="updateExp(${i}, 'role', this.value)" placeholder="Role/Title" class="w-full text-sm font-bold border-b border-transparent focus:border-indigo-500 outline-none">
+                </div>
+                <input type="text" value="${exp.company}" oninput="updateExp(${i}, 'company', this.value)" placeholder="Company" class="w-full text-xs border-b border-transparent focus:border-indigo-500 outline-none">
+                <input type="text" value="${exp.dates}" oninput="updateExp(${i}, 'dates', this.value)" placeholder="Dates (e.g. 2021-2023)" class="w-full text-xs border-b border-transparent focus:border-indigo-500 outline-none">
+                <textarea oninput="updateExp(${i}, 'details', this.value)" placeholder="Bullet points (use new lines)" class="col-span-2 w-full text-xs p-1 bg-gray-50 border border-gray-100 rounded focus:border-indigo-500 outline-none" rows="3">${exp.details}</textarea>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderEducationFields() {
+    const list = document.getElementById('education-list');
+    if (!list) return;
+    list.innerHTML = resumeData.education.map((edu, i) => `
+        <div class="p-3 bg-white border border-gray-200 rounded relative group">
+            <button onclick="removeEducation(${i})" class="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+            </button>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="col-span-2">
+                    <input type="text" value="${edu.school}" oninput="updateEdu(${i}, 'school', this.value)" placeholder="School/University" class="w-full text-sm font-bold border-b border-transparent focus:border-indigo-500 outline-none">
+                </div>
+                <input type="text" value="${edu.degree}" oninput="updateEdu(${i}, 'degree', this.value)" placeholder="Degree" class="w-full text-xs border-b border-transparent focus:border-indigo-500 outline-none">
+                <input type="text" value="${edu.dates}" oninput="updateEdu(${i}, 'dates', this.value)" placeholder="Dates" class="w-full text-xs border-b border-transparent focus:border-indigo-500 outline-none">
+                <textarea oninput="updateEdu(${i}, 'details', this.value)" placeholder="Additional info (GPA, awards...)" class="col-span-2 w-full text-xs p-1 bg-gray-50 border border-gray-100 rounded focus:border-indigo-500 outline-none" rows="2">${edu.details}</textarea>
+            </div>
+        </div>
+    `).join('');
+}
+
+window.updateExp = (index, field, value) => {
+    resumeData.experience[index][field] = value;
+    renderPreview();
+    saveToLocal();
+    // Debounce cloud save if needed, but for now:
+    if (currentUser) saveResume(currentUser.uid, resumeData);
+};
+
+window.updateEdu = (index, field, value) => {
+    resumeData.education[index][field] = value;
+    renderPreview();
+    saveToLocal();
+    if (currentUser) saveResume(currentUser.uid, resumeData);
+};
 window.downloadPDF = function () {
     // Alert user about best practice
     alert("Pro Tip: For the best quality (selectable text), choose 'Save as PDF' as the destination in the print dialog.");
@@ -403,6 +510,8 @@ function updateFormInputs() {
         const el = document.getElementById('input-' + f);
         if (el) el.value = resumeData[f] || "";
     });
+    renderExperienceFields();
+    renderEducationFields();
 }
 
 // --- RENDER PREVIEW (Updated for Privacy Masking) ---
@@ -576,6 +685,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // If guest, try to restore local work
             restoreFromLocal();
+        }
+
+        // Auto-open app if hash is #app
+        if (window.location.hash === '#app' && user) {
+            window.goToApp();
         }
     });
 

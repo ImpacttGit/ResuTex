@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,6 +19,7 @@
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
 </head>
+
 <body class="bg-gray-50 text-gray-800">
 
     <div class="min-h-screen flex flex-col">
@@ -33,27 +35,38 @@
                         <!-- Guest Nav -->
                         <div id="nav-guest" class="flex items-center space-x-4">
                             <a href="login.html" class="text-gray-600 hover:text-gray-900">Sign In</a>
-                            <a href="signup.html" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">Sign Up</a>
+                            <a href="signup.html"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">Sign
+                                Up</a>
                         </div>
                         <!-- User Nav (Hidden by default) -->
                         <div id="nav-user" class="hidden relative">
-                            <button onclick="toggleProfileMenu()" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none">
+                            <button onclick="toggleProfileMenu()"
+                                class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none">
                                 <span id="nav-user-name" class="font-medium text-sm hidden md:block">User</span>
-                                <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 border border-indigo-200 overflow-hidden">
+                                <div
+                                    class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 border border-indigo-200 overflow-hidden">
                                     <img id="nav-user-photo" src="" class="w-full h-full object-cover hidden">
                                     <i id="nav-user-icon" class="fa-solid fa-user text-sm"></i>
                                 </div>
                                 <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
                             </button>
                             <!-- Dropdown -->
-                            <div id="profile-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
+                            <div id="profile-menu"
+                                class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
                                 <div class="px-4 py-2 border-b border-gray-100">
                                     <p class="text-xs text-gray-500">Signed in as</p>
                                     <p id="nav-user-email" class="text-sm font-medium text-gray-900 truncate">...</p>
                                 </div>
-                                <button onclick="openSettingsModal()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Account Settings</button>
-                                <button onclick="viewPlans()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Subscription Plans</button>
-                                <button onclick="logoutUser()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Sign out</button>
+                                <button onclick="openSettingsModal()"
+                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Account
+                                    Settings</button>
+                                <button onclick="viewPlans()"
+                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Subscription
+                                    Plans</button>
+                                <button onclick="logoutUser()"
+                                    class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Sign
+                                    out</button>
                             </div>
                         </div>
                     </div>
@@ -74,39 +87,63 @@
                         <div>
                             <h2 class="text-2xl font-bold text-gray-900 mb-4">Free Starter</h2>
                             <p class="text-gray-600 mb-6">Perfect for trying out our core features.</p>
-                            <div class="text-4xl font-extrabold text-indigo-600 mb-6">£0<span class="text-base font-medium text-gray-500">/month</span></div>
+                            <div class="text-4xl font-extrabold text-indigo-600 mb-6">£0<span
+                                    class="text-base font-medium text-gray-500">/month</span></div>
                             <ul class="text-left space-y-3 mb-8">
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> Basic ATS Template</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> 5 AI Auto-Scans</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> Unlimited PDF Downloads</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> No Watermark</li>
-                                <li class="flex items-center text-gray-400"><i class="fa-solid fa-xmark text-red-500 mr-3"></i> AI Bullet Rewriter</li>
-                                <li class="flex items-center text-gray-400"><i class="fa-solid fa-xmark text-red-500 mr-3"></i> Job Matcher</li>
-                                <li class="flex items-center text-gray-400"><i class="fa-solid fa-xmark text-red-500 mr-3"></i> Access all 20+ Templates</li>
-                                <li class="flex items-center text-gray-400"><i class="fa-solid fa-xmark text-red-500 mr-3"></i> Download .tex Source Code</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> Basic ATS Template</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> 5 AI Auto-Scans</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> Unlimited PDF Downloads</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> No Watermark</li>
+                                <li class="flex items-center text-gray-400"><i
+                                        class="fa-solid fa-xmark text-red-500 mr-3"></i> AI Bullet Rewriter</li>
+                                <li class="flex items-center text-gray-400"><i
+                                        class="fa-solid fa-xmark text-red-500 mr-3"></i> Job Matcher</li>
+                                <li class="flex items-center text-gray-400"><i
+                                        class="fa-solid fa-xmark text-red-500 mr-3"></i> Access all 20+ Templates</li>
+                                <li class="flex items-center text-gray-400"><i
+                                        class="fa-solid fa-xmark text-red-500 mr-3"></i> Download .tex Source Code</li>
                             </ul>
                         </div>
-                        <button onclick="alert('You are on the Free Plan!')" class="w-full bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-md hover:bg-gray-300 transition">Current Plan</button>
+                        <button onclick="alert('You are on the Free Plan!')"
+                            class="w-full bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-md hover:bg-gray-300 transition">Current
+                            Plan</button>
                     </div>
 
                     <!-- Job Hunter Plan -->
-                    <div class="bg-white rounded-lg shadow-xl p-6 flex flex-col justify-between border-2 border-indigo-600 transform scale-105">
+                    <div
+                        class="bg-white rounded-lg shadow-xl p-6 flex flex-col justify-between border-2 border-indigo-600 transform scale-105">
                         <div>
                             <h2 class="text-2xl font-bold text-gray-900 mb-4">Job Hunter</h2>
                             <p class="text-gray-600 mb-6">Our most popular plan for active job seekers.</p>
-                            <div class="text-4xl font-extrabold text-indigo-600 mb-6">£10<span class="text-base font-medium text-gray-500">/month</span></div>
+                            <div class="text-4xl font-extrabold text-indigo-600 mb-6">£10<span
+                                    class="text-base font-medium text-gray-500">/month</span></div>
                             <ul class="text-left space-y-3 mb-8">
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> Basic ATS Template</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> 1,000 AI Credits / Month</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> Unlimited PDF Downloads</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> No Watermark</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> AI Bullet Rewriter</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> Job Matcher</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> Access all 20+ Templates</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> Download .tex Source Code</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> Basic ATS Template</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> 1,000 AI Credits / Month</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> Unlimited PDF Downloads</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> No Watermark</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> AI Bullet Rewriter</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> Job Matcher</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> Access all 20+ Templates</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> Download .tex Source Code
+                                </li>
                             </ul>
                         </div>
-                        <button onclick="alert('Proceeding to checkout for Job Hunter Plan!')" class="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-md hover:bg-indigo-700 transition">Upgrade Now</button>
+                        <button onclick="alert('Proceeding to checkout for Job Hunter Plan!')"
+                            class="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-md hover:bg-indigo-700 transition">Upgrade
+                            Now</button>
                     </div>
 
                     <!-- Student Pass Plan -->
@@ -114,24 +151,38 @@
                         <div>
                             <h2 class="text-2xl font-bold text-gray-900 mb-4">Student Pass</h2>
                             <p class="text-gray-600 mb-6">Cover your whole year of internships.</p>
-                            <div class="text-4xl font-extrabold text-indigo-600 mb-6">£49<span class="text-base font-medium text-gray-500">/year</span></div>
+                            <div class="text-4xl font-extrabold text-indigo-600 mb-6">£49<span
+                                    class="text-base font-medium text-gray-500">/year</span></div>
                             <ul class="text-left space-y-3 mb-8">
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> Basic ATS Template</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> 12,000 AI Credits (Upfront)</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> Unlimited PDF Downloads</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> No Watermark</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> AI Bullet Rewriter</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> Job Matcher</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> Access all 20+ Templates</li>
-                                <li class="flex items-center text-gray-700"><i class="fa-solid fa-check text-green-500 mr-3"></i> Download .tex Source Code</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> Basic ATS Template</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> 12,000 AI Credits (Upfront)
+                                </li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> Unlimited PDF Downloads</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> No Watermark</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> AI Bullet Rewriter</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> Job Matcher</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> Access all 20+ Templates</li>
+                                <li class="flex items-center text-gray-700"><i
+                                        class="fa-solid fa-check text-green-500 mr-3"></i> Download .tex Source Code
+                                </li>
                             </ul>
                         </div>
-                        <button onclick="alert('Proceeding to checkout for Student Pass Plan!')" class="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-md hover:bg-indigo-700 transition">Upgrade Now</button>
+                        <button onclick="alert('Proceeding to checkout for Student Pass Plan!')"
+                            class="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-md hover:bg-indigo-700 transition">Upgrade
+                            Now</button>
                     </div>
                 </div>
 
                 <div class="mt-12">
-                    <a href="index.html" class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center justify-center">
+                    <a href="index.html"
+                        class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center justify-center">
                         <i class="fa-solid fa-arrow-left mr-2"></i> Back to Home
                     </a>
                 </div>
@@ -145,13 +196,15 @@
                     <div>
                         <h3 class="text-sm font-semibold tracking-wider uppercase">Legal</h3>
                         <ul class="mt-4 space-y-4">
-                            <li><a href="terms.html" class="text-base text-gray-300 hover:text-white">Terms & Conditions</a></li>
+                            <li><a href="terms.html" class="text-base text-gray-300 hover:text-white">Terms &
+                                    Conditions</a></li>
                         </ul>
                     </div>
                     <div>
                         <h3 class="text-sm font-semibold tracking-wider uppercase">Support</h3>
                         <ul class="mt-4 space-y-4">
-                            <li><a href="help.html" class="text-base text-gray-300 hover:text-white">Help Center</a></li>
+                            <li><a href="help.html" class="text-base text-gray-300 hover:text-white">Help Center</a>
+                            </li>
                         </ul>
                     </div>
                     <div>
@@ -162,15 +215,17 @@
                     </div>
                 </div>
                 <div class="mt-8 border-t border-gray-700 pt-8 md:flex md:items-center md:justify-between">
-                    <p class="mt-8 text-base text-gray-400 md:mt-0 md:order-1">&copy; 2025 ResuTeX. All rights reserved.</p>
+                    <p class="mt-8 text-base text-gray-400 md:mt-0 md:order-1">&copy; 2025 ResuTeX. All rights reserved.
+                    </p>
                 </div>
             </div>
         </footer>
     </div>
-    
+
     <!-- Modals (Copy from index.html for consistency, will be controlled by script.js) -->
     <!-- Upgrade / Low Credit Modal -->
-    <div id="upgrade-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+    <div id="upgrade-modal"
+        class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
             <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
                 <i class="fa-solid fa-xmark text-xl"></i>
@@ -181,13 +236,15 @@
                 </div>
                 <h3 class="text-lg font-medium text-gray-900">Power Up Your Job Hunt</h3>
                 <p class="text-sm text-gray-500 mt-2">
-                    You need more AI Credits to perform this action. Upgrade to the <strong>Job Hunter</strong> plan to get 1,000 credits/month and unlock the full template gallery.
+                    You need more AI Credits to perform this action. Upgrade to the <strong>Job Hunter</strong> plan to
+                    get 1,000 credits/month and unlock the full template gallery.
                 </p>
                 <div class="mt-6 flex flex-col space-y-3">
                     <button class="w-full bg-indigo-600 text-white py-2 rounded-md font-semibold hover:bg-indigo-700">
                         Upgrade for £10/mo
                     </button>
-                    <button class="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-md font-semibold hover:bg-gray-50">
+                    <button
+                        class="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-md font-semibold hover:bg-gray-50">
                         Buy 500 Credits for £5
                     </button>
                 </div>
@@ -205,7 +262,8 @@
     </div>
 
     <!-- Account Settings Modal -->
-    <div id="settings-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+    <div id="settings-modal"
+        class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
             <button onclick="closeSettingsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
                 <i class="fa-solid fa-xmark text-xl"></i>
@@ -213,24 +271,38 @@
             <div class="text-center">
                 <h3 class="text-2xl font-bold text-gray-900 mb-4">Account Settings</h3>
                 <div class="mb-6">
-                    <div class="mx-auto h-24 w-24 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 border border-indigo-200 overflow-hidden mb-3">
+                    <div
+                        class="mx-auto h-24 w-24 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 border border-indigo-200 overflow-hidden mb-3">
                         <img id="settings-preview-img" src="" class="w-full h-full object-cover hidden">
                         <i id="settings-preview-icon" class="fa-solid fa-user text-3xl"></i>
                     </div>
-                    <input type="file" id="settings-file-input" accept="image/*" class="hidden" onchange="loadPhotoPreview(event)">
-                    <button onclick="document.getElementById('settings-file-input').click()" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">Upload Photo</button>
+                    <input type="file" id="settings-file-input" accept="image/*" class="hidden"
+                        onchange="loadPhotoPreview(event)">
+                    <button onclick="document.getElementById('settings-file-input').click()"
+                        class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">Upload Photo</button>
                 </div>
                 <div class="space-y-4">
                     <div>
-                        <label for="settings-display-name" class="block text-sm font-medium text-gray-700 text-left">Display Name</label>
-                        <input type="text" id="settings-display-name" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <label for="settings-display-name"
+                            class="block text-sm font-medium text-gray-700 text-left">Display Name</label>
+                        <input type="text" id="settings-display-name"
+                            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
-                    <button onclick="saveProfileSettings(event)" class="w-full bg-indigo-600 text-white py-2 rounded-md font-semibold hover:bg-indigo-700">Save Changes</button>
+                    <button onclick="saveProfileSettings(event)"
+                        class="w-full bg-indigo-600 text-white py-2 rounded-md font-semibold hover:bg-indigo-700">Save
+                        Changes</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script type="module" src="assets/js/script.js?v=<%= new Date().getTime() %>"></script>
+    <script>
+        // Dynamic script loader to ensure cache busting
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = `assets/js/script.js?v=${new Date().getTime()}`;
+        document.body.appendChild(script);
+    </script>
 </body>
+
 </html>
