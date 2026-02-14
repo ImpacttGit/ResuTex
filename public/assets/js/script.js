@@ -26,6 +26,144 @@ let credits = 0; // Will be synced from Firestore
 window.logoutUser = logoutUser;
 window.toggleProfileMenu = () => document.getElementById('profile-menu')?.classList.toggle('hidden');
 
+// --- CUSTOM MODAL SYSTEM ---
+window.showAlert = function (message, title = "Message") {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('global-modal');
+        const content = document.getElementById('global-modal-content');
+        const titleEl = document.getElementById('modal-title');
+        const msgEl = document.getElementById('modal-message');
+        const okBtn = document.getElementById('modal-ok-btn');
+        const cancelBtn = document.getElementById('modal-cancel-btn');
+        const iconEl = document.getElementById('modal-icon');
+
+        titleEl.textContent = title;
+        msgEl.textContent = message;
+        cancelBtn.classList.add('hidden');
+        okBtn.textContent = "OK";
+        okBtn.className = "flex-1 bg-indigo-600 text-white py-2.5 rounded-lg font-bold hover:bg-indigo-700 transition shadow-sm";
+        iconEl.innerHTML = '<i class="fa-solid fa-circle-info"></i>';
+        iconEl.className = "flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 text-lg mr-4";
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        }, 10);
+
+        okBtn.onclick = () => {
+            content.classList.add('scale-95', 'opacity-0');
+            content.classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                resolve(true);
+            }, 200);
+        };
+    });
+};
+
+window.showConfirm = function (message, title = "Confirm Action", isDestructive = false) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('global-modal');
+        const content = document.getElementById('global-modal-content');
+        const titleEl = document.getElementById('modal-title');
+        const msgEl = document.getElementById('modal-message');
+        const okBtn = document.getElementById('modal-ok-btn');
+        const cancelBtn = document.getElementById('modal-cancel-btn');
+        const iconEl = document.getElementById('modal-icon');
+
+        titleEl.textContent = title;
+        msgEl.textContent = message;
+        cancelBtn.classList.remove('hidden');
+
+        okBtn.textContent = isDestructive ? "Delete" : "Continue";
+        okBtn.className = isDestructive
+            ? "flex-1 bg-red-600 text-white py-2.5 rounded-lg font-bold hover:bg-red-700 transition shadow-sm"
+            : "flex-1 bg-indigo-600 text-white py-2.5 rounded-lg font-bold hover:bg-indigo-700 transition shadow-sm";
+
+        iconEl.innerHTML = isDestructive ? '<i class="fa-solid fa-trash-can"></i>' : '<i class="fa-solid fa-triangle-exclamation"></i>';
+        iconEl.className = isDestructive
+            ? "flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-red-100 text-red-600 text-lg mr-4"
+            : "flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-amber-100 text-amber-600 text-lg mr-4";
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        }, 10);
+
+        okBtn.onclick = () => {
+            content.classList.add('scale-95', 'opacity-0');
+            content.classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                resolve(true);
+            }, 200);
+        };
+        cancelBtn.onclick = () => {
+            content.classList.add('scale-95', 'opacity-0');
+            content.classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                resolve(false);
+            }, 200);
+        };
+    });
+};
+
+window.showPrompt = function (message, defaultValue = "", title = "Input Required") {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('global-modal');
+        const content = document.getElementById('global-modal-content');
+        const titleEl = document.getElementById('modal-title');
+        const msgEl = document.getElementById('modal-message');
+        const okBtn = document.getElementById('modal-ok-btn');
+        const cancelBtn = document.getElementById('modal-cancel-btn');
+        const iconEl = document.getElementById('modal-icon');
+
+        titleEl.textContent = title;
+        msgEl.innerHTML = `${message}<br><input type="text" id="modal-prompt-input" class="w-full mt-4 p-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm" value="${defaultValue}">`;
+
+        cancelBtn.classList.remove('hidden');
+        okBtn.textContent = "Confirm";
+        okBtn.className = "flex-1 bg-indigo-600 text-white py-2.5 rounded-lg font-bold hover:bg-indigo-700 transition shadow-sm";
+        iconEl.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
+        iconEl.className = "flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 text-lg mr-4";
+
+        modal.classList.remove('hidden');
+        const inputEl = document.getElementById('modal-prompt-input');
+        if (inputEl) {
+            setTimeout(() => {
+                inputEl.focus();
+                inputEl.select();
+            }, 50);
+        }
+
+        setTimeout(() => {
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        }, 10);
+
+        okBtn.onclick = () => {
+            const val = document.getElementById('modal-prompt-input').value;
+            content.classList.add('scale-95', 'opacity-0');
+            content.classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                resolve(val);
+            }, 200);
+        };
+        cancelBtn.onclick = () => {
+            content.classList.add('scale-95', 'opacity-0');
+            content.classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                resolve(null);
+            }, 200);
+        };
+    });
+};
+
 let _advancedDebounce = null;
 window.recompileLatexDebounced = function () {
     clearTimeout(_advancedDebounce);
@@ -122,26 +260,25 @@ window.saveProfileSettings = async function () {
             document.getElementById('nav-user-icon').classList.remove('hidden');
         }
 
-        window.closeSettingsModal();
-        alert("Profile updated!");
+        showAlert("Profile updated!", "Success");
     } catch (error) {
         console.error(error);
-        alert("Error updating profile: " + error.message);
+        showAlert("Error updating profile: " + error.message, "Error");
     } finally {
         btn.innerText = originalText;
         btn.disabled = false;
+        closeSettingsModal();
     }
 };
 
 window.triggerPasswordReset = async function () {
     if (!currentUser || !currentUser.email) return;
-    if (confirm(`Send a password reset email to ${currentUser.email}?`)) {
+    if (await showConfirm(`Send a password reset email to ${currentUser.email}?`, "Reset Password")) {
         try {
             await resetUserPassword(currentUser.email);
-            alert("Email sent! Check your inbox to reset your password.");
+            showAlert("Email sent! Check your inbox to reset your password.", "Check your email");
         } catch (error) {
-            console.error(error);
-            alert("Error: " + error.message);
+            showAlert("Error: " + error.message, "Error");
         }
     }
 };
@@ -267,9 +404,9 @@ window.switchResume = async function (id) {
 };
 
 window.createNewResumeUI = async function () {
-    if (!currentUser) return alert("Please sign in to create resumes.");
+    if (!currentUser) return showAlert("Please sign in to create resumes.", "Sign In Required");
 
-    const name = prompt("Enter a name for your new resume:", "My New Resume");
+    const name = await showPrompt("Enter a name for your new resume:", "My New Resume", "New Resume");
     if (!name) return;
 
     try {
@@ -287,11 +424,6 @@ window.createNewResumeUI = async function () {
 
         // Or copy current contact info if available
         if (resumeData) {
-            baseData.name = name; // Resume Name, not User Name. Wait, the form has a Name field too.
-            // Let's disambiguate Resume Name vs Person Name. 
-            // The resumeData.name is usually the Person's Name. 
-            // We need a metadata field for the Resume Title.
-            // For now, let's assume the user wants to duplicate their contact info at least.
             baseData.name = resumeData.name;
             baseData.email = resumeData.email;
             baseData.phone = resumeData.phone;
@@ -314,13 +446,13 @@ window.createNewResumeUI = async function () {
 
     } catch (e) {
         console.error(e);
-        alert("Error creating resume.");
+        showAlert("Error creating resume.", "Error");
     }
 };
 
 window.deleteResumeUI = async function (e, id) {
     e.stopPropagation(); // Prevent switching
-    if (!confirm("Are you sure you want to delete this resume? This cannot be undone.")) return;
+    if (!await showConfirm("Are you sure you want to delete this resume? This cannot be undone.", "Delete Resume", true)) return;
 
     try {
         await deleteResume(currentUser.uid, id);
@@ -340,7 +472,7 @@ window.deleteResumeUI = async function (e, id) {
         }
     } catch (err) {
         console.error(err);
-        alert("Failed to delete resume.");
+        showAlert("Failed to delete resume.", "Error");
     }
 };
 
@@ -362,7 +494,7 @@ window.showTemplatesView = () => {
 
 window.showUpgradeModal = () => document.getElementById('upgrade-modal').classList.remove('hidden');
 window.closeModal = () => document.getElementById('upgrade-modal').classList.add('hidden');
-window.triggerAIScan = () => alert("AI Scan coming soon! This will allow you to upload an existing PDF and have it auto-filled here.");
+window.triggerAIScan = () => showAlert("AI Scan coming soon! This will allow you to upload an existing PDF and have it auto-filled here.", "Coming Soon");
 
 window.useAICredit = (event, amount, successMsg) => {
     if (credits < amount) {
@@ -384,7 +516,7 @@ window.useAICredit = (event, amount, successMsg) => {
             await updateUserCredits(currentUser.uid, credits);
         }
 
-        alert(successMsg + " (Credits synced to Firestore)");
+        showAlert(successMsg + " (Credits synced to Firestore)", "Success");
         btn.innerHTML = originalContent;
         btn.disabled = false;
     }, 1500);
@@ -476,10 +608,10 @@ window.updateEdu = (index, field, value) => {
     saveToLocal();
     if (currentUser) saveResume(currentUser.uid, resumeData, currentResumeId);
 };
-window.downloadPDF = function () {
+window.downloadPDF = async function () {
     const tier = currentUserProfile?.tier || 'free';
     if (tier === 'free') {
-        alert("High-quality LaTeX PDF export is a premium feature! We've opened the print dialog for you instead. Upgrade to Job Hunter or Student for professional PDF generation.");
+        await showAlert("High-quality LaTeX PDF export is a premium feature! We've opened the print dialog for you instead. Upgrade to Job Hunter or Student for professional PDF generation.", "Premium Feature");
         window.print();
         return;
     }
@@ -507,11 +639,11 @@ window.downloadPDF = function () {
         setTimeout(() => {
             btn.innerHTML = original;
             btn.disabled = false;
-            alert("Your high-quality PDF is being generated. It will open in a new tab shortly.");
+            showAlert("Your high-quality PDF is being generated. It will open in a new tab shortly.", "Success");
         }, 3000);
     } catch (e) {
         console.error(e);
-        alert("Cloud compilation failed. Falling back to local print.");
+        showAlert("Cloud compilation failed. Falling back to local print.", "Export Error");
         window.print();
         btn.innerHTML = original;
         btn.disabled = false;
@@ -519,27 +651,29 @@ window.downloadPDF = function () {
 };
 
 // --- SAMPLE DATA & AUTOSAVE ---
-window.loadSampleData = function () {
-    if (confirm("This will overwrite your current fields. Continue?")) {
+window.loadSampleData = async function () {
+    if (await showConfirm("This will overwrite your current fields. Continue?", "Load Sample Data")) {
         // Generic "John Doe" data
         resumeData = {
             name: "John Doe",
             phone: "+1 (555) 123-4567",
             email: "john.doe@email.com",
             links: "linkedin.com/in/johndoe | github.com/johndoe",
-            summary: "Results-oriented Software Engineer with experience in scalable architecture and distributed systems. Passionate about clean code and automation.",
+            summary: "Experienced software engineer with a 10-year track record of building scalable web applications. Expert in React, Node.js, and cloud architecture.",
             experience: [
-                { role: "Senior Engineer", company: "Tech Solutions Inc.", dates: "2021-Present", details: "• Architected microservices reducing latency by 40%.\n• Mentored junior developers and led code reviews." },
-                { role: "Software Developer", company: "Startup Co.", dates: "2018-2021", details: "• Built full-stack features using React and Node.js.\n• Optimized database queries improving load times by 2x." }
+                { role: "Staff Software Engineer", company: "Google", dates: "2019 - Present", details: "- Improved search latency by 15% through optimized caching strategies.\n- Led a team of 10 engineers in the redesign of the core indexing service.\n- Mentored junior devs and established best practices for TypeScript across the org." },
+                { role: "Senior Web Developer", company: "Facebook", dates: "2015 - 2018", details: "- Architected the internal dashboard for ad campaign management.\n- Reduced build times by 40% by migrating to a modern build system.\n- Collaborated with design teams to implement a new company-wide design system." }
             ],
             education: [
-                { school: "State University", degree: "B.S. Computer Science", dates: "2014-2018", details: "Dean's List, GPA 3.8/4.0" }
+                { school: "Stanford University", degree: "M.S. Computer Science", dates: "2013 - 2015", details: "Specialization in Artificial Intelligence" },
+                { school: "MIT", degree: "B.S. Computer Science", dates: "2009 - 2013", details: "Minor in Economics" }
             ],
-            skills: "JavaScript, Python, Go, Docker, AWS, SQL, NoSQL"
+            skills: "JavaScript, TypeScript, React, Go, Java, Python, Kubernetes, AWS, SQL, NoSQL"
         };
         updateFormInputs();
         renderPreview();
         saveToLocal(); // Auto-save sample data
+        if (currentUser) saveResume(currentUser.uid, resumeData, currentResumeId);
     }
 };
 
@@ -652,7 +786,7 @@ window.toggleJobPanel = function () {
 };
 
 // --- ADVANCED MODE LOGIC ---
-window.toggleAdvancedMode = function () {
+window.toggleAdvancedMode = async function () {
     const toggle = document.getElementById('advanced-mode-switch');
     const isEntering = toggle.checked;
 
@@ -660,7 +794,7 @@ window.toggleAdvancedMode = function () {
     const tier = currentUserProfile?.tier || 'free';
     if (tier === 'free') {
         toggle.checked = false;
-        alert("The Code Editor (Direct LaTeX Editing) is a premium feature. Please upgrade to the Job Hunter or Student plan.");
+        await showAlert("The Code Editor (Direct LaTeX Editing) is a premium feature. Please upgrade to the Job Hunter or Student plan.", "Premium Feature");
         window.viewPlans();
         return;
     }
@@ -786,7 +920,7 @@ function parseLatexToData(latex) {
 
 window.checkoutPlan = async function (tierId) {
     if (!currentUser) {
-        alert("Please sign in to upgrade!");
+        await showAlert("Please sign in to upgrade!", "Sign In Required");
         window.location.href = 'signup.html';
         return;
     }
@@ -794,21 +928,21 @@ window.checkoutPlan = async function (tierId) {
     const planNames = { 'jobhunter': 'Job Hunter (Monthly)', 'student': 'Student Pass (Yearly)' };
     const name = planNames[tierId] || tierId;
 
-    if (confirm(`Proceed to payment for ${name}? (Simulation)`)) {
+    if (await showConfirm(`Proceed to payment for ${name}? (Simulation)`, "Confirm Purchase")) {
         try {
             await updateUserTier(currentUser.uid, tierId);
-            alert("Payment successful! Your account has been upgraded.");
+            await showAlert("Payment successful! Your account has been upgraded.", "Success");
             window.location.href = 'index.html#app';
         } catch (e) {
             console.error(e);
-            alert("Error upgrading tier: " + e.message);
+            showAlert("Error upgrading tier: " + e.message, "Error");
         }
     }
 };
 
 // (Moved to top area)
 
-window.cloudRecompileLatex = function () {
+window.cloudRecompileLatex = async function () {
     const rawCode = document.getElementById('latex-code-input').value;
     const btn = event.currentTarget || document.querySelector('button[onclick="cloudRecompileLatex()"]');
     const original = btn.innerHTML;
@@ -845,7 +979,7 @@ window.cloudRecompileLatex = function () {
 
     } catch (e) {
         console.error(e);
-        alert("Cloud compilation failed. Falling back to local preview.");
+        await showAlert("Cloud compilation failed. Falling back to local preview.", "Preview Error");
         _renderLocalLatex(rawCode);
         btn.innerHTML = original;
         btn.disabled = false;
@@ -911,34 +1045,37 @@ window.exportJSON = function () {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(resumeData, null, 2));
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "my_resume.json");
+    downloadAnchorNode.setAttribute("download", "resume_data.json");
     document.body.appendChild(downloadAnchorNode); // required for firefox
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
 };
 
-window.importJSON = function (event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        try {
-            const imported = JSON.parse(e.target.result);
-            if (confirm("Replace current resume with imported data?")) {
-                resumeData = imported;
-                updateFormInputs();
-                renderPreview();
-                saveToLocal();
-                alert("Import successful!");
+window.importJSON = async function () {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = async readerEvent => {
+            try {
+                const content = JSON.parse(readerEvent.target.result);
+                if (await showConfirm("Replace current resume with imported data?", "Import Resume")) {
+                    resumeData = content;
+                    updateFormInputs();
+                    renderPreview();
+                    saveToLocal();
+                    if (currentUser) saveResume(currentUser.uid, resumeData, currentResumeId);
+                    showAlert("Import successful!", "Success");
+                }
+            } catch (ex) {
+                showAlert("Invalid JSON file.", "Error");
             }
-        } catch (err) {
-            console.error(err);
-            alert("Invalid JSON file.");
-        }
+        };
+        reader.readAsText(file, 'UTF-8');
     };
-    reader.readAsText(file);
-    event.target.value = ''; // Reset input
+    input.click();
 };
 
 // --- LaTeX SOURCE GENERATION ---
@@ -1069,11 +1206,11 @@ function generateLaTeXSource(applyMask, isForExport = false) {
     return tex;
 }
 
-window.exportToTeX = function () {
+window.exportToTeX = async function () {
     // Tier Check
     const tier = currentUserProfile?.tier || 'free';
     if (tier === 'free') {
-        alert("The .tex source export is a premium feature! Please upgrade to the Job Hunter or Student plan to unlock it.");
+        await showAlert("The .tex source export is a premium feature! Please upgrade to the Job Hunter or Student plan to unlock it.", "Premium Feature");
         window.viewPlans();
         return;
     }
@@ -1117,11 +1254,11 @@ window.loadTemplate = async function (templateName) {
         updateFormInputs(); // Update form fields
         renderPreview();    // Update preview
         window.showEditorView(); // Go back to editor
-        alert(`Template '${templateName}' loaded successfully!`);
+        showAlert(`Template '${templateName}' loaded successfully!`, "Success");
 
     } catch (error) {
         console.error("Error loading template:", error);
-        alert("Could not load template. Please try again.");
+        showAlert("Could not load template. Please try again.", "Error");
     }
 };
 

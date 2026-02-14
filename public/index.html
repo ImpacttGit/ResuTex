@@ -818,6 +818,29 @@
             </div>
         </div>
     </div>
+    <!-- Global Alert/Confirm Modal -->
+    <div id="global-modal"
+        class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-[100] p-4 text-left">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all scale-95 opacity-0 duration-200"
+            id="global-modal-content">
+            <div class="flex items-start mb-4">
+                <div id="modal-icon"
+                    class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 text-lg mr-4">
+                    <i class="fa-solid fa-info-circle"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 id="modal-title" class="text-lg font-bold text-gray-900 font-display">Message</h3>
+                    <p id="modal-message" class="text-gray-600 mt-1 text-sm leading-relaxed"></p>
+                </div>
+            </div>
+            <div class="flex flex-row-reverse space-x-reverse space-x-3 mt-6" id="modal-buttons">
+                <button id="modal-ok-btn"
+                    class="flex-1 bg-indigo-600 text-white py-2.5 rounded-lg font-bold hover:bg-indigo-700 transition shadow-sm">OK</button>
+                <button id="modal-cancel-btn"
+                    class="hidden flex-1 bg-white border border-gray-200 text-gray-600 py-2.5 rounded-lg font-bold hover:bg-gray-50 transition">Cancel</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Cloud LaTeX Helper (Hidden) -->
     <form id="cloud-latex-form" method="POST" action="https://texlive.net/cgi-bin/latexcgi" target="_blank"
