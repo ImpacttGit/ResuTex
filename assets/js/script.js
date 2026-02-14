@@ -1,3 +1,5 @@
+import { monitorAuthState, saveResume, getResume, logoutUser } from './firebase-app.js';
+
 // --- State Management ---
 let resumeData = {
     name: "",
@@ -17,6 +19,7 @@ function goToApp() {
     document.getElementById('landing-page').classList.add('hidden');
     document.getElementById('app-view').classList.remove('hidden');
     document.getElementById('app-view').classList.add('flex');
+    showEditorView();
     renderPreview();
 }
 
@@ -24,6 +27,20 @@ function goHome() {
     document.getElementById('app-view').classList.add('hidden');
     document.getElementById('app-view').classList.remove('flex');
     document.getElementById('landing-page').classList.remove('hidden');
+}
+
+function showTemplatesView() {
+    document.querySelector('#app-view > main').classList.add('hidden');
+    document.getElementById('templates-view').classList.remove('hidden');
+    document.getElementById('templates-link').classList.add('bg-gray-800', 'border-r-4', 'border-indigo-500');
+    document.getElementById('editor-link').classList.remove('bg-gray-800', 'border-r-4', 'border-indigo-500');
+}
+
+function showEditorView() {
+    document.getElementById('templates-view').classList.add('hidden');
+    document.querySelector('#app-view > main').classList.remove('hidden');
+    document.getElementById('editor-link').classList.add('bg-gray-800', 'border-r-4', 'border-indigo-500');
+    document.getElementById('templates-link').classList.remove('bg-gray-800', 'border-r-4', 'border-indigo-500');
 }
 
 // --- Modal Logic ---
@@ -107,6 +124,14 @@ function triggerAIScan() {
 }
 
 // --- Form <-> State Sync ---
+let currentUser = null;
+
+function autoSave() {
+    if (currentUser) {
+        saveResume(currentUser.uid, resumeData);
+    }
+}
+
 function updateFormInputs() {
     document.getElementById('input-name').value = resumeData.name;
     document.getElementById('input-phone').value = resumeData.phone;
@@ -115,7 +140,6 @@ function updateFormInputs() {
     document.getElementById('input-summary').value = resumeData.summary;
     document.getElementById('input-skills').value = resumeData.skills;
     
-    // Render Experience inputs dynamic list
     const expList = document.getElementById('experience-list');
     expList.innerHTML = resumeData.experience.map((job, index) => `
         <div class="border-l-2 border-indigo-200 pl-3 mb-4">
@@ -126,7 +150,6 @@ function updateFormInputs() {
         </div>
     `).join('');
 
-    // Render Education inputs dynamic list
     const eduList = document.getElementById('education-list');
     eduList.innerHTML = resumeData.education.map((edu, index) => `
         <div class="border-l-2 border-indigo-200 pl-3 mb-4">
@@ -140,32 +163,20 @@ function updateFormInputs() {
 function updateExperience(index, field, value) {
     resumeData.experience[index][field] = value;
     renderPreview();
+    autoSave();
 }
 
 function updateEducation(index, field, value) {
     resumeData.education[index][field] = value;
     renderPreview();
+    autoSave();
 }
-
-// Listen for typing in main inputs
-['name', 'phone', 'email', 'links', 'summary', 'skills'].forEach(field => {
-    const element = document.getElementById(`input-${field}`);
-    if (element) {
-        element.addEventListener('input', (e) => {
-            resumeData[field] = e.target.value;
-            renderPreview();
-        });
-    }
-});
 
 // --- Render "LaTeX" Preview ---
 function renderPreview() {
     const preview = document.getElementById('preview-page');
     
-    // HTML Structure simulating LaTeX 'Modern' template
-    // We use simple divs with specific classes defined in CSS
     let html = `
-        <!-- Header -->
         <div class="text-center mb-6">
             <div class="latex-h1">${resumeData.name || "Your Name"}</div>
             <div class="text-sm">
@@ -174,15 +185,11 @@ function renderPreview() {
                 ${resumeData.links}
             </div>
         </div>
-
-        <!-- Summary -->
         ${resumeData.summary ? `
         <div class="latex-section">Summary</div>
         <div class="text-justify mb-2">
             ${resumeData.summary}
         </div>` : ''}
-
-        <!-- Experience -->
         ${resumeData.experience.length > 0 ? `
         <div class="latex-section">Experience</div>
         <div>
@@ -199,8 +206,6 @@ function renderPreview() {
                 </div>
             `).join('')}
         </div>` : ''}
-
-        <!-- Education -->
         ${resumeData.education.length > 0 ? `
         <div class="latex-section">Education</div>
         <div>
@@ -215,30 +220,116 @@ function renderPreview() {
                 </div>
             `).join('')}
         </div>` : ''}
-
-        <!-- Skills -->
         ${resumeData.skills ? `
         <div class="latex-section">Skills</div>
         <div class="text-sm">
             ${resumeData.skills}
         </div>` : ''}
     `;
-
     preview.innerHTML = html;
 }
 
-// Initial Render
-document.addEventListener('DOMContentLoaded', function() {
-    renderPreview();
+// --- Template Functions ---
+function renderTemplates() {
+    const templatesList = document.getElementById('templates-list');
+    templatesList.innerHTML = templates.map(template => `
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform duration-300">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold text-gray-800">${template.title}</h3>
+                <button onclick="loadTemplate('${template.name}')" class="mt-4 w-full bg-indigo-600 text-white py-2 rounded-md font-semibold hover:bg-indigo-700">
+                    Use Template
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function loadTemplate(templateName) {
+    fetch(`templates/${templateName}.json`)
+        .then(response => response.json())
+        .then(data => {
+            resumeData = data;
+            updateFormInputs();
+            renderPreview();
+            autoSave();
+            showEditorView();
+        })
+        .catch(error => console.error('Error loading template:', error));
+}
+
+// --- PDF Generation ---
+async function downloadPDF() {
+    const downloadBtn = document.getElementById('download-pdf-btn');
+    const originalBtnText = downloadBtn.innerHTML;
+    downloadBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Generating...`;
+    downloadBtn.disabled = true;
+
+    const { jsPDF } = window.jspdf;
+    const content = document.getElementById('preview-page');
     
-    // Set up input listeners after DOM is ready
-    ['name', 'phone', 'email', 'links', 'summary', 'skills'].forEach(field => {
-        const element = document.getElementById(`input-${field}`);
-        if (element) {
-            element.addEventListener('input', (e) => {
-                resumeData[field] = e.target.value;
-                renderPreview();
-            });
+    const originalStyle = content.style.cssText;
+    content.style.width = '190mm';
+    content.style.padding = '0';
+
+    try {
+        const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+        await doc.html(content, {
+            callback: function(doc) {
+                doc.save('resume.pdf');
+                content.style.cssText = originalStyle;
+            },
+            margin: [10, 10, 10, 10],
+            autoPaging: 'text',
+            width: 190,
+            windowWidth: 980
+        });
+    } catch (error) {
+        console.error("Error generating PDF:", error);
+        alert("Sorry, there was an error generating the PDF. Please try again.");
+        content.style.cssText = originalStyle;
+    } finally {
+        downloadBtn.innerHTML = originalBtnText;
+        downloadBtn.disabled = false;
+    }
+}
+
+// --- App Initialization ---
+monitorAuthState(user => {
+    if (user) {
+        currentUser = user;
+        getResume(user.uid).then(docSnap => {
+            if (docSnap.exists()) {
+                resumeData = docSnap.data();
+            }
+            updateFormInputs();
+            renderPreview();
+            renderTemplates(); // Also render templates on load
+        });
+
+        // Setup main input listeners
+        ['name', 'phone', 'email', 'links', 'summary', 'skills'].forEach(field => {
+            const element = document.getElementById(`input-${field}`);
+            if (element) {
+                element.addEventListener('input', () => {
+                    resumeData[field] = element.value;
+                    renderPreview();
+                    autoSave();
+                });
+            }
+        });
+    } else {
+        currentUser = null;
+        // Redirect to login page if not on a public page
+        const publicPages = ['/', '/index.html', '/login.html', '/signup.html', '/terms.html', '/help.html', '/about.html'];
+        const currentPath = window.location.pathname.split('/').pop();
+
+        if (!publicPages.includes(window.location.pathname) && !publicPages.includes('/' + currentPath) ) {
+             window.location.href = 'login.html';
         }
-    });
+    }
 });
+
+// Override goHome to logout
+function goHome() {
+    logoutUser();
+}

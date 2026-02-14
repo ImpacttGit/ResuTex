@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResuTeX - About Us</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <div class="flex flex-col min-h-screen">
+        <nav class="bg-white border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <a href="/" class="flex items-center">
+                        <i class="fa-solid fa-file-code text-indigo-600 text-2xl mr-2"></i>
+                        <span class="font-bold text-xl tracking-tight text-gray-900">ResuTeX</span>
+                    </a>
+                    <div class="flex items-center space-x-4">
+                        <a href="/#pricing" class="text-gray-600 hover:text-gray-900">Pricing</a>
+                        <button onclick="location.href='main.html'" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">
+                            Get Started
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="flex-grow max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-extrabold text-gray-900">About Us</h1>
+            <div class="prose prose-lg mt-6 text-gray-500">
+                <h2>Our Mission</h2>
+                <p>At ResuTeX, our mission is to bridge the gap between beautiful design and job market success. We believe that everyone deserves a resume that not only looks professional but also gets past the automated systems that filter applications.</p>
+                <p>We started ResuTeX because we saw too many talented people getting their resumes rejected by Applicant Tracking Systems (ATS) simply because of formatting issues. The elegant, academic look of LaTeX has always been a gold standard in fields like science and engineering, but traditional LaTeX resumes are often unreadable by ATS bots. We set out to fix that.</p>
+                <p>Our platform empowers you to create resumes with that coveted LaTeX polish, but built on a foundation that is 100% ATS-compliant. We handle the code, the formatting, and the technical details, so you can focus on what matters most: presenting your skills and experience in the best possible light.</p>
+            </div>
+        </main>
+
+        <footer class="bg-gray-800 text-white">
+            <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div>
+                        <h3 class="text-sm font-semibold tracking-wider uppercase">Legal</h3>
+                        <ul class="mt-4 space-y-4">
+                            <li><a href="terms.html" class="text-base text-gray-300 hover:text-white">Terms & Conditions</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold tracking-wider uppercase">Support</h3>
+                        <ul class="mt-4 space-y-4">
+                            <li><a href="help.html" class="text-base text-gray-300 hover:text-white">Help Center</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold tracking-wider uppercase">Company</h3>
+                        <ul class="mt-4 space-y-4">
+                            <li><a href="about.html" class="text-base text-gray-300 hover:text-white">About Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-8 border-t border-gray-700 pt-8 md:flex md:items-center md:justify-between">
+                    <p class="mt-8 text-base text-gray-400 md:mt-0 md:order-1">&copy; 2025 ResuTeX. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
