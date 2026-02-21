@@ -4,12 +4,12 @@ import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDo
 // --- CONFIG ---
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    authDomain: "resutex-6e173.firebaseapp.com",
-    projectId: "resutex-6e173",
-    storageBucket: "resutex-6e173.firebasestorage.app",
-    messagingSenderId: "975092472832",
-    appId: "1:975092472832:web:6c038a3d5b688a7fbf0ce5",
-    measurementId: "G-RQSD5PBLRX"
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 const app = initializeApp(firebaseConfig);
