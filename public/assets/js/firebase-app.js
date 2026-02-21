@@ -3,7 +3,7 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, si
 import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 // --- CONFIG ---
 const firebaseConfig = {
-    apiKey: "REDACTED_FIREBASE_KEY",
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
     authDomain: "resutex-6e173.firebaseapp.com",
     projectId: "resutex-6e173",
     storageBucket: "resutex-6e173.firebasestorage.app",
